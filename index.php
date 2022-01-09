@@ -136,15 +136,12 @@ if(isset($_SESSION['player']) and isset($_SESSION['moves1'])){
 
 
 function ia($board, $sign){
-	$test=[0,1,2,3,4,5,6,7,8];			// test table
+	$test=[0,1,2,3,4,5,6,7,8];			// test table 
 	$board=array_diff($test,$board);	// check played cases
 	//var_dump($board);
-	if($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0 ){ // when to play for sign
-		if($sign='X'){									
-			$sign= 'O';
-		} else {
-			$sign = 'X';
-		}
+	if($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0 ){ // play 1st and every cell that % 2 is diff than 0 
+		if ($sign='X') {	$sign= 'O'; }    		// condition for player signs
+		else {   $sign = 'X'; }					
 		$board=array_diff($board,$_SESSION['moves1']);	// subtract away player 1 game 
 		if(empty($_SESSION['moves2'])){					// if player 2 game is empty 
 			$_SESSION['moves2']=$_SESSION['moves1'];	// player 2 game = player 1 game 
@@ -158,9 +155,9 @@ function ia($board, $sign){
 	}
 }
 
-// SEND it DART!___________________________-
+// START the ai and pass to next turn____________________
 
-if(isset($_SESSION['turn']) and ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0) ){		//when to play
+if(isset($_SESSION['turn']) and ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0) ){	//when to play
 	$newstartstate=ia($board,$sign);
 	$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); //state for next move
 	header('Location:index.php');
