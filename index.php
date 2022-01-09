@@ -43,9 +43,6 @@ if(isset($_POST['reset'])){
 	header('Location:index.php');
 }
 
-if(isset($_SESSION['end']) and (!isset($_POST['X'])||isset($_POST['O']))){
-	echo $_SESSION['end'];
-}
 
 if(isset($_POST['X'])){			// initialise the game____
 	$_SESSION['player']='X';
@@ -87,11 +84,11 @@ if(isset($_SESSION['start'])){
 			$val=' ';
 		}
 		if($pos==2||$pos==5){
-			echo '<input type="submit" name="'.$pos.'" value="'.$val.'" class="cells'.$pos.'">';	//__ layout
-			echo '<br>';
+			echo '<input type="submit" name="'.$pos.'" value="'.$val.'" class="cells'.$pos.'">';	//__ pos here 4 layout
+			echo '<br>';  // assign to inputs a position num and as value the sign of the player
 		} else {
 			echo '<input type="submit" name="'.$pos.'" value="'.$val.'" class="cells'.$pos.'">';	//__ 
-		}
+		}							   //idem..______
 		if(isset($_POST[$pos])){
 			$newstartstate=array($pos=>$_SESSION['player']);
 			$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); //state for next move
