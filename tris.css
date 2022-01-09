@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+	:root {
+		--genfont: 'Permanent Marker', cursive; 
+		--bkgcolor: #171123;
+		--player1: #59629B;
+		--player2: #E000A1;
+		--player1D: #414770;
+		--player2D: #8F0066;
+		--yellow: #F8C630;
+		--pink: #E54F6D;
+		--purple: #724E91;
+		--purpleD:  #3E2B50;
+		--genshad: rgba(0, 0, 0, 0.24) 0px 3px 8px;;
+	}
+
+	body{
+		background-color:  var(--bkgcolor);
+		color: white;
+	}
+
+	a {
+		text-decoration: none;
+		font-family: var(--genfont);
+		font-size: 1.5em;
+		color: white;
+	}
+	a:hover {
+		color: var(--pink);
+	}
+	h5 {
+		font-size: 1em;
+		font-family: var(--genfont);
+	}
+
+	main{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		font-family: var(--genfont);
+		font-size: 1.5em;
+		background-color:  var(--bkgcolor);
+		color: white;
+	}
+	footer {
+		text-align: center;
+		font-family: var(--genfont);
+		font-size: 1.5em;
+		color: white;
+	}
+	input {
+		font-family: var(--genfont);
+		font-size: 1.5em;	
+	}
+	.choice {
+		width: 50px;
+		height: 55px;
+		background-color: white;
+		border: none;
+		box-shadow: var(--genshad);	
+		text-align: center;	
+		color: white;
+	}
+	.choice[name*='X'] {
+		background-color: var(--player1);
+	}
+	.choice[name*='X']:hover {
+		background-color: var(--player1D);
+	}
+	.choice[name*='O'] {
+		background-color: var(--player2);
+	}
+	.choice[name*='O']:hover {
+		background-color: var(--player2D);
+	}
+
+	input[class^="cells"] {
+		width: 60px;
+		height: 60px;
+		background-color: white;
+		border: none;
+		box-shadow: var(--genshad);		
+		text-align: center;
+	}
+	input[class^="cells"]:hover {
+		background-color: var(--purple);
+		color: white;
+	}
+	#reset {
+		padding: 10px;
+		border: none;
+		background-color: var(--purple);
+		box-shadow: var(--genshad);	
+		color: white;
+	}
+	#reset:hover {
+		background-color: var(--purpleD);
+	}
+	.player1c {
+		color: var(--player1);
+	}
+	.player2c {
+		color: var(--player2);
+	}
