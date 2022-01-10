@@ -46,8 +46,6 @@ if(isset($_POST['reset'])){
 
 if(isset($_POST['X'])){			// initialise the game____
 	$_SESSION['player']='X';
-	//$_SESSION['moves1'][]=true;	// store player1 moves
-	//$_SESSION['moves2'][]=true;	// store player2 moves
 	$_SESSION['turn']=0;
 	$_SESSION['start']= true;
 	$_SESSION['startstate']= [ 0,0,0,
@@ -78,7 +76,7 @@ if(isset($_SESSION['moves1']) and isset($_SESSION['moves2'])){
 //table___________________________________________________
 
 echo '<form method="post">';
-if(isset($_SESSION['start'])){ 
+if(isset($_SESSION['start']) and !isset($_SESSION['end'])){ 
 	foreach($_SESSION['startstate'] as $pos =>$val){
 		if($val===0){
 			$val=' ';
@@ -98,7 +96,7 @@ if(isset($_SESSION['start'])){
 		}
 	}
 	echo '</form>';
-} else {
+} elseif(!isset($_SESSION['end'])) {
 	echo '<h3> choose a sign to start the game </h3>';
 }
 /*
@@ -110,12 +108,21 @@ if(isset($_SESSION['moves1']) and isset($_SESSION['moves2'])){
 // my turns and end game 
 
 
-if(isset($_SESSION['turn']) and $_SESSION['turn']==9){
+if(isset($_SESSION['turn']) and $_SESSION['turn']>10 and !isset($_SESSION['end'])){
 	session_destroy();
 	header('Location:index.php');
+} elseif( isset($_SESSION['end']) ){
+	if($_SESSION['end']=='win1'){
+		echo '</form><big><strong>! WIN PLAYER 1 !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+	} elseif ( $_SESSION['end']=='win2' ){
+		echo '</form><big><strong>! WIN PLAYER 2!</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+	} elseif ( $_SESSION['end']=='draw' ){
+		echo '</form><big><strong>! DRAW !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+	}
+
 }
 
-if(isset($_SESSION['turn'])){ 
+if(isset($_SESSION['turn']) and !isset($_SESSION['end'])){ 
 	echo 'turn n '.$_SESSION['turn'];
 	if($_SESSION['turn'] === 0 || $_SESSION['turn']%2 === 0 ){
 		echo '<span class="player1c">X <small>make your move!</small></span> ';
@@ -140,8 +147,8 @@ function ia($board, $sign){
 		if ($sign='X') {	$sign= 'O'; }    		// condition for player signs
 		else {   $sign = 'X'; }					
 		$board=array_diff($board,$_SESSION['moves1']);	// subtract away player 1 game 
-		if(empty($_SESSION['moves2'])){					// if player 2 game is empty 
-			$_SESSION['moves2']=$_SESSION['moves1'];	// player 2 game = player 1 game 
+		if(empty($_SESSION['moves2'])){					// if player 2 game is empty => so we're in TURN 0 or 1
+			$_SESSION['moves2']=$_SESSION['moves1'];	// player 2 game = player 1 game not to have errors
 		}
 		$board=array_diff($board,$_SESSION['moves2']);	// subtract away player 2 game
 		//var_dump($board);		
@@ -169,22 +176,23 @@ $win=['0,1,2','3,4,5','6,7,8','0,3,6','1,4,7','2,5,8','0,4,8','2,4,6'];	//___ NB
 if(isset($_SESSION['moves1']) and isset($_SESSION['moves2']) and isset($_SESSION['turn']) ){
 	$win1= $_SESSION['moves1'];	
 	$win2= $_SESSION['moves2'];
+	if( $_SESSION['turn']>=0){
+		array_shift($win2); 			// take away the first element on turn 1
+	}
 	sort($win1);					//___ sort the values in ASC order to match $win values _______<---
 	sort($win2);
 	$win1=implode(',',$win1);
 	$win2=implode(',',$win2);
+	//echo $win1.'<br>';
+	echo $win2;
 	if( in_array($win1, $win) == true){
-		$_SESSION['end']='<big><strong>! WIN PLAYER 1!</strong></big><style> .cells{pointer-events: none; } .choice{pointer-events: none;} </style>';
-	} elseif(   $win2===$win[0]||$win2===$win[1]||$win2===$win[2]||
-				$win2===$win[3]||$win2===$win[4]||$win2===$win[5]||
-				$win2===$win[6]||$win2===$win[7]){
-		$_SESSION['end']='<big><strong>! WIN PLAYER 2!</strong></big><style> .cells{pointer-events: none; } .choice{pointer-events: none;} </style>';
-	} elseif ( isset($_SESSION['turn']) and $_SESSION['turn'] == 9) {
-		$_SESSION['end']='<big><strong>! DRAW !</strong></big><style> .cells{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		$_SESSION['end']='win1';
+	} elseif(  in_array($win2, $win) == true){
+		$_SESSION['end']='win2';
+	} elseif ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10) {
+		$_SESSION['end']='draw';
 	}
 }
-
-
 
 ?>
 </main>

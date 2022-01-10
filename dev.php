@@ -25,7 +25,7 @@ session_start();
 	<header>
 		<a href="index.php">index</a>
 		<br>
-		<h5>you're now on page <big>TEST</big></h5>
+		<h5>you're now on page <big>DEV</big></h5>
 	</header>
 <main>
 	<form method="post">
