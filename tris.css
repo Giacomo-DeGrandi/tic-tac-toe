@@ -50,16 +50,17 @@
 	}
 	input {
 		font-family: var(--genfont);
-		font-size: 1.5em;	
+		font-size: 2em;	
 	}
 	.choice {
-		width: 50px;
-		height: 55px;
+		width: 70px;
+		height: 77px;
 		background-color: white;
 		border: none;
 		box-shadow: var(--genshad);	
 		text-align: center;	
 		color: white;
+		margin-top: 20px;
 	}
 	.choice[name*='X'] {
 		background-color: var(--player1);
@@ -75,8 +76,8 @@
 	}
 
 	input[class^="cells"] {
-		width: 60px;
-		height: 60px;
+		width: 80px;
+		height: 80px;
 		background-color: white;
 		border: none;
 		box-shadow: var(--genshad);		

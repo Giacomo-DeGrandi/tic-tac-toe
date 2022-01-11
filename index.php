@@ -91,6 +91,7 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 			$newstartstate=array($pos=>$_SESSION['player']);
 			$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); //state for next move
 			$_SESSION['moves1'][]=$pos;			// store player 1 game and pos
+			$_SESSION['player1state']=$_SESSION['startstate'];
 			$_SESSION['turn']++;				//	add 1 to turn
 			header('Location:index.php');		// reload page after have started ai & set changes
 		}
@@ -113,9 +114,9 @@ if(isset($_SESSION['turn']) and $_SESSION['turn']>10 and !isset($_SESSION['end']
 	header('Location:index.php');
 } elseif( isset($_SESSION['end']) ){
 	if($_SESSION['end']=='win1'){
-		echo '</form><big><strong>! WIN PLAYER 1 !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><big><strong>! YOU WIN !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	} elseif ( $_SESSION['end']=='win2' ){
-		echo '</form><big><strong>! WIN PLAYER 2!</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><big><strong>! YOUR OPPONENT WON  !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	} elseif ( $_SESSION['end']=='draw' ){
 		echo '</form><big><strong>! DRAW !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	}
@@ -125,9 +126,21 @@ if(isset($_SESSION['turn']) and $_SESSION['turn']>10 and !isset($_SESSION['end']
 if(isset($_SESSION['turn']) and !isset($_SESSION['end'])){ 
 	echo 'turn n '.$_SESSION['turn'];
 	if($_SESSION['turn'] === 0 || $_SESSION['turn']%2 === 0 ){
-		echo '<span class="player1c">X <small>make your move!</small></span> ';
+		if($_SESSION['player'] == 'X'){
+		echo '<span class="player1c">X <small>make your move!</small></span> ';			
+		} 
+		elseif($_SESSION['player'] == 'O'){
+		echo '<span class="player1c">X <small>make your move!</small></span> ';			
+		}
 	} elseif ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0 ){
-		echo '<span class="player2c"> O <small>make your move!</small></span>';
+		if($_SESSION['player'] == 'X'){
+		echo '<span class="player1c">X <small>make your move!</small></span> ';			
+		} 
+		elseif($_SESSION['player'] == 'O'){
+		echo '<span class="player1c">X <small>make your move!</small></span> ';			
+		}
+	} if ($_SESSION['turn'] > 0){
+		echo '<style> .choice{pointer-events: none;} </style>';
 	}
 }
 
@@ -144,8 +157,8 @@ function ia($board, $sign){
 	$board=array_diff($test,$board);	// check played cases
 	//var_dump($board);
 	if($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0 ){ // play 1st and every cell that % 2 is diff than 0 
-		if ($sign='X') {	$sign= 'O'; }    		// condition for player signs
-		else {   $sign = 'X'; }					
+		if ($sign=='X') {	$sign= 'O'; }    		// condition for player signs
+		elseif ($sign=='O') {   $sign = 'X'; }					
 		$board=array_diff($board,$_SESSION['moves1']);	// subtract away player 1 game 
 		if(empty($_SESSION['moves2'])){					// if player 2 game is empty => so we're in TURN 0 or 1
 			$_SESSION['moves2']=$_SESSION['moves1'];	// player 2 game = player 1 game not to have errors
@@ -162,37 +175,86 @@ function ia($board, $sign){
 // START the ai and pass to next turn____________________
 
 if(isset($_SESSION['turn']) and ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0) ){	//when to play
-	$newstartstate=ia($board,$sign);
-	$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); //state for next move
+	$newstartstate=ia($board,$sign);														// START THE AI__________*****
+	$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); 			//state for next move
+	$_SESSION['player2state']= $_SESSION['startstate'];
 	header('Location:index.php');
 }
-	
-// var_dump($_SESSION['startstate']);
 
-// compare to check who's winning_______________________
+// GET the state of the board for each player separate______________________________
+
+if(isset($_SESSION['player2state']) and isset($_SESSION['player1state'])){
+	var_dump($_SESSION['player1state']);
+	//$_SESSION['player2state']=array_diff($_SESSION['startstate'],$_SESSION['player1state']);
+	for($m=1;$m<=isset($_SESSION['player2state'][$m]);$m++){
+		if($_SESSION['player2state'][$m] == 'X'){
+			$_SESSION['player2state'][$m] = 0;
+		}
+		foreach($_SESSION['player2state'] as $k => $v){
+			if($v == 'X'){
+				$v = array(0 => 0);
+				$_SESSION['player2state'] =array_replace($_SESSION['player2state'],$v);	//state of the board ONLY 4 P 2 !!
+			}
+		}
+	}
+	//$_SESSION['player2state']=array_replace($_SESSION['startstate'],$_SESSION['player2state']);
+	var_dump($_SESSION['player2state']);
+}
+	
+// WINNING and ENDS conds_______________________
 
 $win=['0,1,2','3,4,5','6,7,8','0,3,6','1,4,7','2,5,8','0,4,8','2,4,6'];	//___ NB ASC order_________--->
 
 if(isset($_SESSION['moves1']) and isset($_SESSION['moves2']) and isset($_SESSION['turn']) ){
 	$win1= $_SESSION['moves1'];	
 	$win2= $_SESSION['moves2'];
+	//var_dump($win1);
+	//var_dump($win2);
 	if( $_SESSION['turn']>=0){
-		array_shift($win2); 			// take away the first element on turn 1
+		array_shift($win2); 		// take away the first element on turn > than 0
 	}
 	sort($win1);					//___ sort the values in ASC order to match $win values _______<---
 	sort($win2);
 	$win1=implode(',',$win1);
 	$win2=implode(',',$win2);
-	//echo $win1.'<br>';
-	echo $win2;
-	if( in_array($win1, $win) == true){
-		$_SESSION['end']='win1';
-	} elseif(  in_array($win2, $win) == true){
-		$_SESSION['end']='win2';
-	} elseif ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10) {
-		$_SESSION['end']='draw';
+	foreach($win as $k=>$v){
+		if(  strpos($win1, $v)){
+			$_SESSION['end']='win1';
+		} elseif(  strpos($win2, $v)){							// compare  to check if 2 WIN
+			$_SESSION['end']='win2';
+		} elseif ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10 and !isset($_SESSION['end'])) {	// compare  to check if DRAW
+			$_SESSION['end']='draw';
+		}
 	}
 }
+
+if(isset($_SESSION['moves1'])){
+ 	var_dump($_SESSION['startstate']);
+ 	var_dump($_SESSION['moves1']);
+ 	var_dump($_SESSION['moves2']);
+ 	if( $_SESSION['turn']>=0){
+		array_shift($_SESSION['moves2']); 		// take away the first element on turn > than 0
+	}
+	$square= [0=>8,1=>1,2=>6,3=>3,4=>5,5=>7,6=>4,7=>9,8=>2];
+	$state= $_SESSION['startstate'];
+	for($i=0;$i<=isset($state[$i]);$i++){
+		if($state[$i] == true){
+			$state[$i] = empty($state[$i]);
+		}
+	}
+	$winX=array_replace($square,$state);
+	$winX2=$winX;
+	foreach($winX2 as $k =>$v){
+			if( $v === 0){
+			$v2=array_replace_recursive($square,$winX2);
+			$v=$v2;
+			}
+	}
+	$_SESSION['winX']=$winX2;
+	var_dump($winX2);
+	var_dump($square);
+}
+
 
 ?>
 </main>
