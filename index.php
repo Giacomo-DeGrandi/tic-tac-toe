@@ -76,7 +76,7 @@ if(isset($_SESSION['moves1']) and isset($_SESSION['moves2'])){
 //table___________________________________________________
 
 echo '<form method="post">';
-if(isset($_SESSION['start']) and !isset($_SESSION['end'])){ 
+if(isset($_SESSION['start']) and !isset($_SESSION['end']) and $_SESSION['turn']<10){ 
 	foreach($_SESSION['startstate'] as $pos =>$val){
 		if($val===0){
 			$val=' ';
@@ -90,10 +90,10 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 		if(isset($_POST[$pos])){
 			$newstartstate=array($pos=>$_SESSION['player']);
 			$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); //state for next move
-			$_SESSION['moves1'][]=$pos;			// store player 1 game and pos
-			$_SESSION['player1state']=$_SESSION['startstate'];
+			$_SESSION['moves1'][]=$pos;							// store player 1 game and pos
+			$_SESSION['player1state']=$_SESSION['startstate'];	// idem but on the game table
 			$_SESSION['turn']++;				//	add 1 to turn
-			header('Location:index.php');		// reload page after have started ai & set changes
+			//header('Location:index.php');		// reload page after have started ai & set changes
 		}
 	}
 	echo '</form>';
@@ -109,7 +109,7 @@ if(isset($_SESSION['moves1']) and isset($_SESSION['moves2'])){
 // my turns and end game 
 
 
-if(isset($_SESSION['turn']) and $_SESSION['turn']>10 and !isset($_SESSION['end'])){
+if(isset($_SESSION['turn']) and $_SESSION['turn']>9 and !isset($_SESSION['end'])){
 	session_destroy();
 	header('Location:index.php');
 } elseif( isset($_SESSION['end']) ){
@@ -184,8 +184,6 @@ if(isset($_SESSION['turn']) and ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !
 // GET the state of the board for each player separate______________________________
 
 if(isset($_SESSION['player2state']) and isset($_SESSION['player1state'])){
-	var_dump($_SESSION['player1state']);
-	//$_SESSION['player2state']=array_diff($_SESSION['startstate'],$_SESSION['player1state']);
 	for($m=1;$m<=isset($_SESSION['player2state'][$m]);$m++){
 		if($_SESSION['player2state'][$m] == 'X'){
 			$_SESSION['player2state'][$m] = 0;
@@ -197,63 +195,56 @@ if(isset($_SESSION['player2state']) and isset($_SESSION['player1state'])){
 			}
 		}
 	}
-	//$_SESSION['player2state']=array_replace($_SESSION['startstate'],$_SESSION['player2state']);
-	var_dump($_SESSION['player2state']);
+	for($n=1;$n<=isset($_SESSION['player1state'][$n]);$n++){
+		if($_SESSION['player1state'][$n] == 'O'){
+			$_SESSION['player1state'][$n] = 0;
+		}
+		foreach($_SESSION['player1state'] as $k => $v){
+			if($v == 'O'){
+				$v = array($k => 0);
+				$_SESSION['player1state'] =array_replace($_SESSION['player1state'],$v);	//state of the board ONLY 4 P 2 !!
+			}
+		}
+	} 
+	//var_dump($_SESSION['player1state']);
+	//var_dump($_SESSION['player2state']);
 }
 	
 // WINNING and ENDS conds_______________________
 
-$win=['0,1,2','3,4,5','6,7,8','0,3,6','1,4,7','2,5,8','0,4,8','2,4,6'];	//___ NB ASC order_________--->
+if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
+	$win_a=[0,0,0,0,0,0,0,0,0];	
+	$win_b=$win_a;
+	$checkx=$_SESSION['player1state'];
+	$win_a=array_replace($win_a,$checkx);
+	if( $win_a[0] === 'X' and $win_a[1] === 'X' and $win_a[2] === 'X' or 	//___HORIZONTALS___
+		$win_a[3] === 'X' and $win_a[4] === 'X' and $win_a[5] === 'X' or
+		$win_a[6] === 'X' and $win_a[7] === 'X' and $win_a[8] === 'X' or
+		$win_a[0] === 'X' and $win_a[3] === 'X' and $win_a[6] === 'X' or	//___VERTICALS_____
+		$win_a[1] === 'X' and $win_a[4] === 'X' and $win_a[7] === 'X' or
+		$win_a[2] === 'X' and $win_a[5] === 'X' and $win_a[8] === 'X' or
+		$win_a[0] === 'X' and $win_a[4] === 'X' and $win_a[8] === 'X' or	//___DIAGONALS_____
+		$win_a[2] === 'X' and $win_a[4] === 'X' and $win_a[6] === 'X' 	 ){
+			$_SESSION['end'] = 'win1';
+	} 
+	$checkx2=$_SESSION['player2state'];
+	$win_b=array_replace($win_b,$checkx2);
+	if (	$win_b[0] === 'O' and $win_b[1] === 'O' and $win_b[2] === 'O' or 	//___HORIZONTALS___
+			$win_b[3] === 'O' and $win_b[4] === 'O' and $win_b[5] === 'O' or
+			$win_b[6] === 'O' and $win_b[7] === 'O' and $win_b[8] === 'O' or
+			$win_b[0] === 'O' and $win_b[3] === 'O' and $win_b[6] === 'O' or	//___VERTICALS_____
+			$win_b[1] === 'O' and $win_b[4] === 'O' and $win_b[7] === 'O' or
+			$win_b[2] === 'O' and $win_b[5] === 'O' and $win_b[8] === 'O' or
+			$win_b[0] === 'O' and $win_b[4] === 'O' and $win_b[8] === 'O' or	//___DIAGONALS_____
+			$win_b[2] === 'O' and $win_b[4] === 'O' and $win_b[6] === 'O' 	 ){
+			$_SESSION['end'] = 'win2';
 
-if(isset($_SESSION['moves1']) and isset($_SESSION['moves2']) and isset($_SESSION['turn']) ){
-	$win1= $_SESSION['moves1'];	
-	$win2= $_SESSION['moves2'];
-	//var_dump($win1);
-	//var_dump($win2);
-	if( $_SESSION['turn']>=0){
-		array_shift($win2); 		// take away the first element on turn > than 0
 	}
-	sort($win1);					//___ sort the values in ASC order to match $win values _______<---
-	sort($win2);
-	$win1=implode(',',$win1);
-	$win2=implode(',',$win2);
-	foreach($win as $k=>$v){
-		if(  strpos($win1, $v)){
-			$_SESSION['end']='win1';
-		} elseif(  strpos($win2, $v)){							// compare  to check if 2 WIN
-			$_SESSION['end']='win2';
-		} elseif ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10 and !isset($_SESSION['end'])) {	// compare  to check if DRAW
+	if ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10 and !isset($_SESSION['end'])) {	// compare  to check if DRAW
 			$_SESSION['end']='draw';
-		}
 	}
 }
 
-if(isset($_SESSION['moves1'])){
- 	var_dump($_SESSION['startstate']);
- 	var_dump($_SESSION['moves1']);
- 	var_dump($_SESSION['moves2']);
- 	if( $_SESSION['turn']>=0){
-		array_shift($_SESSION['moves2']); 		// take away the first element on turn > than 0
-	}
-	$square= [0=>8,1=>1,2=>6,3=>3,4=>5,5=>7,6=>4,7=>9,8=>2];
-	$state= $_SESSION['startstate'];
-	for($i=0;$i<=isset($state[$i]);$i++){
-		if($state[$i] == true){
-			$state[$i] = empty($state[$i]);
-		}
-	}
-	$winX=array_replace($square,$state);
-	$winX2=$winX;
-	foreach($winX2 as $k =>$v){
-			if( $v === 0){
-			$v2=array_replace_recursive($square,$winX2);
-			$v=$v2;
-			}
-	}
-	$_SESSION['winX']=$winX2;
-	var_dump($winX2);
-	var_dump($square);
-}
 
 
 ?>

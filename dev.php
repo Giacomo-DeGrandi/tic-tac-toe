@@ -38,8 +38,110 @@ session_start();
 	<span><br></span>
 <?php 
 
+if($x == 'X'){
+	$_SESSION['end']='win1';
+} elseif($x == 'O'){
+	$_SESSION['end']='win2';	
+} elseif ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10 and !isset($_SESSION['end'])) {	// compare  to check if DRAW
+	$_SESSION['end']='draw';
+}
 
+
+// FIRST END TRY
+
+if(isset($_SESSION['moves1']) and isset($_SESSION['moves2']) and isset($_SESSION['turn']) ){
+	$win=['0,1,2','3,4,5','6,7,8','0,3,6','1,4,7','2,5,8','0,4,8','2,4,6'];	//___ NB ASC order_________--->
+	$win1= $_SESSION['moves1'];	
+	$win2= $_SESSION['moves2'];
+	//var_dump($win1);
+	//var_dump($win2);
+	if( $_SESSION['turn']>=0){
+		array_shift($win2); 		// take away the first element on turn > than 0
+	}
+	sort($win1);					//___ sort the values in ASC order to match $win values _______<---
+	sort($win2);
+	$win1=implode(',',$win1);
+	$win2=implode(',',$win2);
+	foreach($win as $k=>$v){
+		if(  strpos($win1, $v)){
+			$_SESSION['end']='win1';
+		} elseif(  strpos($win2, $v)){							// compare  to check if 2 WIN
+			$_SESSION['end']='win2';
+		} elseif ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10 and !isset($_SESSION['end'])) {	// compare  to check if DRAW
+			$_SESSION['end']='draw';
+		}
+	}
+}
+
+
+if(isset($_SESSION['moves1'])){
+ 	var_dump($_SESSION['startstate']);
+ 	var_dump($_SESSION['moves1']);
+ 	var_dump($_SESSION['moves2']);
+ 	if( $_SESSION['turn']>=0){
+		array_shift($_SESSION['moves2']); 		// take away the first element on turn > than 0
+	}
+	$square= [0=>8,1=>1,2=>6,3=>3,4=>5,5=>7,6=>4,7=>9,8=>2];
+	$state= $_SESSION['startstate'];
+	for($i=0;$i<=isset($state[$i]);$i++){
+		if($state[$i] == true){
+			$state[$i] = empty($state[$i]);
+		}
+	}
+	$winX=array_replace($square,$state);
+	$winX2=$winX;
+	foreach($winX2 as $k =>$v){
+			if( $v === 0){
+			$v2=array_replace_recursive($square,$winX2);
+			$v=$v2;
+			}
+	}
+	$_SESSION['winX']=$winX2;
+	var_dump($winX2);
+	var_dump($square);
+}
+
+	$win_b=[0,1,2,$x,$x,$x,6,7,8];
+	$win_c=[0,1,2,3,4,5,$x,$x,$x];
+	$win_d=[$x,1,2,$x,4,5,$x,7,8];		// VERTICAL
+	$win_e=[0,$x,2,3,$x,5,6,$x,8];
+	$win_f=[0,1,$x,3,4,$x,6,7,$x];
+	$win_g=[$x,1,2,3,$x,5,6,7,$x];		// DIAGONAL
+	$win_h=[0,1,$x,3,$x,5,$x,7,8];
 /*
+
+$square= [8,1,6,3,5,7,4,9,2];
+
+$win=array_diff($_SESSION['startstate'],$square);
+
+
+array_replace(array, array1)
+
+
+
+$_SESSION['startstate'] = $start;
+
+if($start[0] and $start[1] and $start[2]) == 'X' ){			//condition 1   HORIZONTALS__
+
+} elseif (($start[0] and $start[1] and $start[2]) == 'O' ){
+
+}
+if($start[3] and $start[4] and $start[5]) == 'X' ){		//condition 2
+
+} elseif (($start[3] and $start[4] and $start[5]) == 'O' ){
+
+}
+if($start[6] and $start[7] and $start[8]) == 'X' ){			//condition 3
+
+} elseif (($start[6] and $start[7] and $start[8]) == 'O' ){
+
+}
+if($start[0] and $start[1] and $start[2]) == 'X' ){		//condition 4	VERTICALS__
+
+} elseif (($start[0] and $start[1] and $start[2]) == 'O' ){
+
+}
+
 
 if(isset($_POST['reset'])){
 	session_destroy();
