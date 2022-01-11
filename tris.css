@@ -103,3 +103,7 @@
 	.player2c {
 		color: var(--player2);
 	}
+
+	.wrapit {
+		text-align: center;
+	}

@@ -100,47 +100,44 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end']) and $_SESSION['turn']<
 } elseif(!isset($_SESSION['end'])) {
 	echo '<h3> choose a sign to start the game </h3>';
 }
-/*
-if(isset($_SESSION['moves1']) and isset($_SESSION['moves2'])){
-	var_dump($_SESSION['moves1']);
-	var_dump($_SESSION['moves2']);
-}
-*/
-// my turns and end game 
+
+// TURN counting and END print__________________________________________________________
 
 
-if(isset($_SESSION['turn']) and $_SESSION['turn']>9 and !isset($_SESSION['end'])){
+if(isset($_SESSION['turn']) and $_SESSION['turn']> 9 and !isset($_SESSION['end'])){
 	session_destroy();
 	header('Location:index.php');
 } elseif( isset($_SESSION['end']) ){
 	if($_SESSION['end']=='win1'){
-		echo '</form><big><strong>! YOU WIN !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160 X </h1> WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	} elseif ( $_SESSION['end']=='win2' ){
-		echo '</form><big><strong>! YOUR OPPONENT WON  !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160 O </h1> WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	} elseif ( $_SESSION['end']=='draw' ){
-		echo '</form><big><strong>! DRAW !</strong></big><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><div class="wrapit"><big><strong>! DRAW !</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	}
 
 }
 
+//__SIGNAL moves________________________________________
+
 if(isset($_SESSION['turn']) and !isset($_SESSION['end'])){ 
 	echo 'turn n '.$_SESSION['turn'];
 	if($_SESSION['turn'] === 0 || $_SESSION['turn']%2 === 0 ){
-		if($_SESSION['player'] == 'X'){
+		if($_SESSION['player'] === 'X'){
 		echo '<span class="player1c">X <small>make your move!</small></span> ';			
 		} 
-		elseif($_SESSION['player'] == 'O'){
+		elseif($_SESSION['player'] === 'O'){
 		echo '<span class="player1c">X <small>make your move!</small></span> ';			
 		}
 	} elseif ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0 ){
-		if($_SESSION['player'] == 'X'){
+		if($_SESSION['player'] === 'X'){
 		echo '<span class="player1c">X <small>make your move!</small></span> ';			
 		} 
-		elseif($_SESSION['player'] == 'O'){
+		elseif($_SESSION['player'] === 'O'){
 		echo '<span class="player1c">X <small>make your move!</small></span> ';			
 		}
 	} if ($_SESSION['turn'] > 0){
-		echo '<style> .choice{pointer-events: none;} </style>';
+		echo '<style> .choice{pointer-events: none;} </style>';			// block pointer on sign choice
 	}
 }
 
@@ -190,11 +187,13 @@ if(isset($_SESSION['player2state']) and isset($_SESSION['player1state'])){
 		}
 		foreach($_SESSION['player2state'] as $k => $v){
 			if($v == 'X'){
-				$v = array(0 => 0);
+				$v = array($k => 0);
 				$_SESSION['player2state'] =array_replace($_SESSION['player2state'],$v);	//state of the board ONLY 4 P 2 !!
 			}
 		}
 	}
+	//var_dump($_SESSION['player2state']);
+	//var_dump($_SESSION['player1state']);
 	for($n=1;$n<=isset($_SESSION['player1state'][$n]);$n++){
 		if($_SESSION['player1state'][$n] == 'O'){
 			$_SESSION['player1state'][$n] = 0;
@@ -206,8 +205,6 @@ if(isset($_SESSION['player2state']) and isset($_SESSION['player1state'])){
 			}
 		}
 	} 
-	//var_dump($_SESSION['player1state']);
-	//var_dump($_SESSION['player2state']);
 }
 	
 // WINNING and ENDS conds_______________________
@@ -216,6 +213,7 @@ if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
 	$win_a=[0,0,0,0,0,0,0,0,0];	
 	$win_b=$win_a;
 	$checkx=$_SESSION['player1state'];
+	//var_dump($_SESSION['player1state']);
 	$win_a=array_replace($win_a,$checkx);
 	if( $win_a[0] === 'X' and $win_a[1] === 'X' and $win_a[2] === 'X' or 	//___HORIZONTALS___
 		$win_a[3] === 'X' and $win_a[4] === 'X' and $win_a[5] === 'X' or
@@ -224,7 +222,8 @@ if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
 		$win_a[1] === 'X' and $win_a[4] === 'X' and $win_a[7] === 'X' or
 		$win_a[2] === 'X' and $win_a[5] === 'X' and $win_a[8] === 'X' or
 		$win_a[0] === 'X' and $win_a[4] === 'X' and $win_a[8] === 'X' or	//___DIAGONALS_____
-		$win_a[2] === 'X' and $win_a[4] === 'X' and $win_a[6] === 'X' 	 ){
+		$win_a[2] === 'X' and $win_a[4] === 'X' and $win_a[6] === 'X' or $_SESSION['player'] === ('X' or 'O')
+			and !isset($_SESSION['end'])	){
 			$_SESSION['end'] = 'win1';
 	} 
 	$checkx2=$_SESSION['player2state'];
@@ -236,9 +235,9 @@ if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
 			$win_b[1] === 'O' and $win_b[4] === 'O' and $win_b[7] === 'O' or
 			$win_b[2] === 'O' and $win_b[5] === 'O' and $win_b[8] === 'O' or
 			$win_b[0] === 'O' and $win_b[4] === 'O' and $win_b[8] === 'O' or	//___DIAGONALS_____
-			$win_b[2] === 'O' and $win_b[4] === 'O' and $win_b[6] === 'O' 	 ){
+			$win_b[2] === 'O' and $win_b[4] === 'O' and $win_b[6] === 'O' or $_SESSION['player'] === ('X' or 'O')
+			and !isset($_SESSION['end'])	 ){
 			$_SESSION['end'] = 'win2';
-
 	}
 	if ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10 and !isset($_SESSION['end'])) {	// compare  to check if DRAW
 			$_SESSION['end']='draw';
@@ -252,9 +251,12 @@ if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
 	<footer>
 <?php
 
-if(isset($_SESSION['player'])){
+if(isset($_SESSION['player']) and $_SESSION['player'] === 'X'){
 	echo '<span class="player1c">player 1 <small>sign:</small> <big> X </big></span>';	
 	echo '<span class="player2c">player 2 <small>sign:</small> <big> O </big></span>'; 
+} elseif (isset($_SESSION['player']) and $_SESSION['player'] === 'O'){
+	echo '<span class="player2c">player 1 <small>sign:</small> <big> O </big></span>';	
+	echo '<span class="player1c">player 2 <small>sign:</small> <big> X </big></span>'; 
 }
 
 ?>
