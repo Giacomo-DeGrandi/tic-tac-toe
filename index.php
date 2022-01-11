@@ -23,9 +23,7 @@ session_start();
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <body>
 	<header>
-		<a href="dev.php">dev</a>
-		<br>
-		<h5>you're now on page <big>index</big></h5>
+
 	</header>
 <main>
 	<form method="post">
@@ -109,9 +107,9 @@ if(isset($_SESSION['turn']) and $_SESSION['turn']> 9 and !isset($_SESSION['end']
 	header('Location:index.php');
 } elseif( isset($_SESSION['end']) ){
 	if($_SESSION['end']=='win1'){
-		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160 X </h1> WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160 X </h1>&#160WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	} elseif ( $_SESSION['end']=='win2' ){
-		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160 O </h1> WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160 O </h1>&#160WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	} elseif ( $_SESSION['end']=='draw' ){
 		echo '</form><div class="wrapit"><big><strong>! DRAW !</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	}
@@ -149,25 +147,7 @@ if(isset($_SESSION['player']) and isset($_SESSION['moves1'])){
 }
 
 
-function ia($board, $sign){
-	$test=[0,1,2,3,4,5,6,7,8];			// test table 
-	$board=array_diff($test,$board);	// check played cases
-	//var_dump($board);
-	if($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0 ){ // play 1st and every cell that % 2 is diff than 0 
-		if ($sign=='X') {	$sign= 'O'; }    		// condition for player signs
-		elseif ($sign=='O') {   $sign = 'X'; }					
-		$board=array_diff($board,$_SESSION['moves1']);	// subtract away player 1 game 
-		if(empty($_SESSION['moves2'])){					// if player 2 game is empty => so we're in TURN 0 or 1
-			$_SESSION['moves2']=$_SESSION['moves1'];	// player 2 game = player 1 game not to have errors
-		}
-		$board=array_diff($board,$_SESSION['moves2']);	// subtract away player 2 game
-		//var_dump($board);		
-		$board=array_rand($board,1);				// choose one random element from arr
-		$_SESSION['moves2'][]=$board;				// store the move of player 2
-		$_SESSION['turn']++;						// add a turn
-		return array($board => $sign);				// return ai moves and sign
-	}
-}
+include 'ai.php';
 
 // START the ai and pass to next turn____________________
 
@@ -215,27 +195,27 @@ if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
 	$checkx=$_SESSION['player1state'];
 	//var_dump($_SESSION['player1state']);
 	$win_a=array_replace($win_a,$checkx);
-	if( $win_a[0] === 'X' and $win_a[1] === 'X' and $win_a[2] === 'X' or 	//___HORIZONTALS___
-		$win_a[3] === 'X' and $win_a[4] === 'X' and $win_a[5] === 'X' or
-		$win_a[6] === 'X' and $win_a[7] === 'X' and $win_a[8] === 'X' or
-		$win_a[0] === 'X' and $win_a[3] === 'X' and $win_a[6] === 'X' or	//___VERTICALS_____
-		$win_a[1] === 'X' and $win_a[4] === 'X' and $win_a[7] === 'X' or
-		$win_a[2] === 'X' and $win_a[5] === 'X' and $win_a[8] === 'X' or
-		$win_a[0] === 'X' and $win_a[4] === 'X' and $win_a[8] === 'X' or	//___DIAGONALS_____
-		$win_a[2] === 'X' and $win_a[4] === 'X' and $win_a[6] === 'X' or $_SESSION['player'] === ('X' or 'O')
+	if( ($win_a[0] === 'X' and $win_a[1] === 'X' and $win_a[2] === 'X' or 	//___HORIZONTALS___
+			$win_a[3] === 'X' and $win_a[4] === 'X' and $win_a[5] === 'X' or
+			$win_a[6] === 'X' and $win_a[7] === 'X' and $win_a[8] === 'X' or
+			$win_a[0] === 'X' and $win_a[3] === 'X' and $win_a[6] === 'X' or	//___VERTICALS_____
+			$win_a[1] === 'X' and $win_a[4] === 'X' and $win_a[7] === 'X' or
+			$win_a[2] === 'X' and $win_a[5] === 'X' and $win_a[8] === 'X' or
+			$win_a[0] === 'X' and $win_a[4] === 'X' and $win_a[8] === 'X' or	//___DIAGONALS_____
+			$win_a[2] === 'X' and $win_a[4] === 'X' and $win_a[6] === 'X' or $_SESSION['player'] === ('X' or 'O'))
 			and !isset($_SESSION['end'])	){
 			$_SESSION['end'] = 'win1';
 	} 
 	$checkx2=$_SESSION['player2state'];
 	$win_b=array_replace($win_b,$checkx2);
-	if (	$win_b[0] === 'O' and $win_b[1] === 'O' and $win_b[2] === 'O' or 	//___HORIZONTALS___
-			$win_b[3] === 'O' and $win_b[4] === 'O' and $win_b[5] === 'O' or
-			$win_b[6] === 'O' and $win_b[7] === 'O' and $win_b[8] === 'O' or
-			$win_b[0] === 'O' and $win_b[3] === 'O' and $win_b[6] === 'O' or	//___VERTICALS_____
-			$win_b[1] === 'O' and $win_b[4] === 'O' and $win_b[7] === 'O' or
-			$win_b[2] === 'O' and $win_b[5] === 'O' and $win_b[8] === 'O' or
-			$win_b[0] === 'O' and $win_b[4] === 'O' and $win_b[8] === 'O' or	//___DIAGONALS_____
-			$win_b[2] === 'O' and $win_b[4] === 'O' and $win_b[6] === 'O' or $_SESSION['player'] === ('X' or 'O')
+	if (	($win_b[0] === 'O' and $win_b[1] === 'O' and $win_b[2] === 'O' or 	//___HORIZONTALS___
+				$win_b[3] === 'O' and $win_b[4] === 'O' and $win_b[5] === 'O' or
+				$win_b[6] === 'O' and $win_b[7] === 'O' and $win_b[8] === 'O' or
+				$win_b[0] === 'O' and $win_b[3] === 'O' and $win_b[6] === 'O' or	//___VERTICALS_____
+				$win_b[1] === 'O' and $win_b[4] === 'O' and $win_b[7] === 'O' or
+				$win_b[2] === 'O' and $win_b[5] === 'O' and $win_b[8] === 'O' or
+				$win_b[0] === 'O' and $win_b[4] === 'O' and $win_b[8] === 'O' or	//___DIAGONALS_____
+				$win_b[2] === 'O' and $win_b[4] === 'O' and $win_b[6] === 'O' or $_SESSION['player'] === ('X' or 'O'))
 			and !isset($_SESSION['end'])	 ){
 			$_SESSION['end'] = 'win2';
 	}
