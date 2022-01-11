@@ -2,14 +2,6 @@
 
 session_start();
 
-// table
-
-//each case has a min value & max value
-//each TURN is a depth level
-//each case can have 3 different values o, x , n 
-
-// 8 depth level to check moves in a game
-// each case is an input 
 
 ?>
 <!DOCTYPE html>
@@ -91,7 +83,7 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end']) and $_SESSION['turn']<
 			$_SESSION['moves1'][]=$pos;							// store player 1 game and pos
 			$_SESSION['player1state']=$_SESSION['startstate'];	// idem but on the game table
 			$_SESSION['turn']++;				//	add 1 to turn
-			//header('Location:index.php');		// reload page after have started ai & set changes
+			
 		}
 	}
 	echo '</form>';
@@ -147,7 +139,7 @@ if(isset($_SESSION['player']) and isset($_SESSION['moves1'])){
 }
 
 
-include 'ai.php';
+include 'ai.php';			// INCLUDE AI FOR PLAY_________________________________
 
 // START the ai and pass to next turn____________________
 
@@ -172,8 +164,6 @@ if(isset($_SESSION['player2state']) and isset($_SESSION['player1state'])){
 			}
 		}
 	}
-	//var_dump($_SESSION['player2state']);
-	//var_dump($_SESSION['player1state']);
 	for($n=1;$n<=isset($_SESSION['player1state'][$n]);$n++){
 		if($_SESSION['player1state'][$n] == 'O'){
 			$_SESSION['player1state'][$n] = 0;
@@ -193,7 +183,6 @@ if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
 	$win_a=[0,0,0,0,0,0,0,0,0];	
 	$win_b=$win_a;
 	$checkx=$_SESSION['player1state'];
-	//var_dump($_SESSION['player1state']);
 	$win_a=array_replace($win_a,$checkx);
 	if( ($win_a[0] === 'X' and $win_a[1] === 'X' and $win_a[2] === 'X' or 	//___HORIZONTALS___
 			$win_a[3] === 'X' and $win_a[4] === 'X' and $win_a[5] === 'X' or
