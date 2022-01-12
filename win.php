@@ -2,7 +2,7 @@
 
 if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
 	$win_a=[0,0,0,0,0,0,0,0,0];	
-	$win_b=$win_a;
+	$win_b=$win_a; 
 	$checkx=$_SESSION['player1state'];
 	$win_a=array_replace($win_a,$checkx);
 	if( ($win_a[0] === 'X' and $win_a[1] === 'X' and $win_a[2] === 'X' or 	//___HORIZONTALS___

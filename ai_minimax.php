@@ -6,7 +6,7 @@ function ia($board,$sign){
 		$state=$_SESSION['startstate'];		// get the current state of the board
 		$test=[0,1,2,3,4,5,6,7,8];			// test for empty
 		$played=array_diff($test,$state);	// get the played spots
-				/*
+				/* 
 		$free=array_search(0,$state);		// get the played spots
 		var_dump($free);
 		$turn=$_SESSION['turn'];				// get the current turn

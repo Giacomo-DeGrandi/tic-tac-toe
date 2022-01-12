@@ -83,7 +83,7 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end']) and $_SESSION['turn']<
 			$_SESSION['moves1'][]=$pos;							// store player 1 game and pos
 			$_SESSION['player1state']=$_SESSION['startstate'];	// idem but on the game table
 			$_SESSION['turn']++;				//	add 1 to turn
-			header('Location:index.php');
+			//header('Location:index.php'); 
 			
 		}
 	}
@@ -150,7 +150,7 @@ if(isset($_SESSION['turn']) and ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !
 	$newstartstate=ia($board,$sign);														// START THE AI__________*****
 	$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); 			//state for next move
 	$_SESSION['player2state']= $_SESSION['startstate'];
-	header('Location:index.php');
+	//header('Location:index.php');
 }
 
 // GET the state of the board for each player separate______________________________
