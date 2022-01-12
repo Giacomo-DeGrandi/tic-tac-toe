@@ -11,14 +11,18 @@ function ia($board,$sign){
 		var_dump($free);
 		$turn=$_SESSION['turn'];				// get the current turn
 		*/
-		for($i=0;$i<=isset($state[$i]);$i++){
-			if($state[$i]==0){
+		var_dump($state);
+		for($i=0;$i<=isset($state[$i]);$i++){	// get my table and sign indexed
+			if($state[$i]===0){
 				$state[$i]=$i;
 			}
-			$current[]=$played;				// store current board to test WIN state
-			$index[]=$state[$i];			// store the index to check 
-			$current[$played[$i]]=$humansign;			// replace value with mark
 		}
+		for($j=0;$j<=isset($state[$j]);$j++){
+			$current[$j][]=$state[$j];	// store current board to test WIN state
+			$index[]=$state[$j];			// store the index to check 
+			$current[$j][$state[$j]]=$humansign;
+		}
+
 		var_dump($state);
 		var_dump($current);
 

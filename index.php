@@ -140,9 +140,9 @@ if(isset($_SESSION['player']) and isset($_SESSION['moves1'])){
 }
 
 
-include 'ai.php';			// INCLUDE AI RANDOM________________________________________________________________############
+//include 'ai.php';			// INCLUDE AI RANDOM________________________________________________________________############
 
-//include 'ai_minimax.php';			// INCLUDE AI MINIMAX_______________________________________________________############
+include 'ai_minimax.php';			// INCLUDE AI MINIMAX_______________________________________________________############
 
 // START the ai and pass to next turn____________________
 
