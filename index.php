@@ -83,6 +83,7 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end']) and $_SESSION['turn']<
 			$_SESSION['moves1'][]=$pos;							// store player 1 game and pos
 			$_SESSION['player1state']=$_SESSION['startstate'];	// idem but on the game table
 			$_SESSION['turn']++;				//	add 1 to turn
+			header('Location:index.php');
 			
 		}
 	}
@@ -99,9 +100,9 @@ if(isset($_SESSION['turn']) and $_SESSION['turn']> 9 and !isset($_SESSION['end']
 	header('Location:index.php');
 } elseif( isset($_SESSION['end']) ){
 	if($_SESSION['end']=='win1'){
-		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160 X </h1>&#160WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160X </h1>&#160WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	} elseif ( $_SESSION['end']=='win2' ){
-		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160 O </h1>&#160WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
+		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160O </h1>&#160WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	} elseif ( $_SESSION['end']=='draw' ){
 		echo '</form><div class="wrapit"><big><strong>! DRAW !</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
 	}
@@ -139,7 +140,9 @@ if(isset($_SESSION['player']) and isset($_SESSION['moves1'])){
 }
 
 
-include 'ai.php';			// INCLUDE AI FOR PLAY_________________________________
+include 'ai.php';			// INCLUDE AI RANDOM________________________________________________________________############
+
+//include 'ai_minimax.php';			// INCLUDE AI MINIMAX_______________________________________________________############
 
 // START the ai and pass to next turn____________________
 
@@ -228,7 +231,11 @@ if(isset($_SESSION['player']) and $_SESSION['player'] === 'X'){
 	echo '<span class="player1c">player 2 <small>sign:</small> <big> X </big></span>'; 
 }
 
+
 ?>
+			<br><br><br><br><br><br><br><br><br>
+			<p>giditree<p> 
+			<a href="https://github.com/Giacomo-DeGrandi">mon github</a> 
 	</footer>
 </body>
 </html>
