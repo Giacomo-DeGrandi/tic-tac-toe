@@ -21,11 +21,13 @@ function ia($board,$sign){
 				$current[] = $state;	//	store the state of the board
 				$index[] = $j;			// store the index
 				for($y=0;$y<=isset($current[$y]);$y++){ // simulate the turns
-					if($y === 0 || $y %2 === 0){
-						$state[$j] = $humansign;	// add humansign
+					if($y === 0 || $y %2 === 0 and ($y<9)){
+						$state[$j] = $humansign;	// add humansigns
 						$current[$j][] = $state;	//	store the state of the board
-													// if this state is a win
-					} elseif($y === 1 || $y %2 !== 0 ){
+						if($current[$j][$j] == $win){ 	// check if this state is a win
+
+						}	
+					} elseif($y === 1 || $y %2 !== 0 and ($y<9)){
 						$state[$j] = $aisign;	// add aisign
 						$current[$j][] = $state;	//	store the state of the board
 					}
