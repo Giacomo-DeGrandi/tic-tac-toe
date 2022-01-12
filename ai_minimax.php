@@ -3,6 +3,8 @@
 
 function ia($board,$sign){
 		$humansign=$sign;					// get the human player sign 
+		if($sign === 'X'){ $aisign = 'O';}
+		if($sign === 'O'){ $aisign = 'x';}
 		$state=$_SESSION['startstate'];		// get the current state of the board
 		$test=[0,1,2,3,4,5,6,7,8];			// test for empty
 		$played=array_diff($test,$state);	// get the played spots
@@ -14,11 +16,20 @@ function ia($board,$sign){
 			}
 		}
 		for($j=0;$j<=isset($state[$j]);$j++){	// for each cell
-			if($state[$j] !== 'X' or 'O'){	//	if free
+			if($state[$j] !== 'X' and $state[$j] !== 'O'){		//	if free
 				$state[$j] = $humansign;	// add a mark to the actual cell
 				$current[] = $state;	//	store the state of the board
 				$index[] = $j;			// store the index
-										// simulate the turns
+				for($y=0;$y<=isset($current[$y]);$y++){ // simulate the turns
+					if($y === 0 || $y %2 === 0){
+						$state[$j] = $humansign;	// add humansign
+						$current[$j][] = $state;	//	store the state of the board
+													// if this state is a win
+					} elseif($y === 1 || $y %2 !== 0 ){
+						$state[$j] = $aisign;	// add aisign
+						$current[$j][] = $state;	//	store the state of the board
+					}
+				}						
 			}
 		}
 
