@@ -14,11 +14,11 @@ function ia($board,$sign){
 			}
 		}
 		for($j=0;$j<=isset($state[$j]);$j++){	// for each cell
-			if($state[$j] !== 'X' or 'O'){		//	if free
-				$state[$j] = $humansign;		// add a mark to the actual cell
-				$current[] = $state;			//	store the state of the board
-				$index[] = $j;					// store the index
-												// simulate the turns
+			if($state[$j] !== 'X' or 'O'){	//	if free
+				$state[$j] = $humansign;	// add a mark to the actual cell
+				$current[] = $state;	//	store the state of the board
+				$index[] = $j;			// store the index
+										// simulate the turns
 			}
 		}
 
