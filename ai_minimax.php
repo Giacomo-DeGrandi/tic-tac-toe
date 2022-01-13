@@ -8,25 +8,36 @@ function ia($board,$sign){	// <---- has to be kept for test purpose
 		$state=$_SESSION['startstate'];		// get the current state of the board
 		$turn=$_SESSION['turn'];				// get the current turn
 		$humansign=$sign;				// get the human player sign
-		$aisign=0;					// declare and get the aisign
-		if($sign === 'X'){ $aisign = 'O';}
-		if($sign === 'O'){ $aisign = 'X';}
+		if($sign === 'X'){ $aisign = 2; $humansign = 1;}	// declare and get the aisign and humansign
+		if($sign === 'O'){ $aisign = 1; $humansign = 2;}
+				var_dump($state);
+		for($i=0;$i<=isset($state[$i]);$i++){
+			if($state[$i] === 'X'){ $state[$i] = 1;}	// declare and get the aisign and humansign
+			if($state[$i] === 'O'){ $state[$i] = 2;}
+		}
 		$state=array_chunk($state, 3);	// divide the array in 3 chunks to square it
-
+		var_dump($state);
 function play($state,$aisign,$turn,$humansign){
    			$max = -100;		// give a value to moves to compare it with mini		
 			$temp=$state; 		// get the state to reuse 
+			var_dump($state);
 			for($i=0;$i<3;$i++){	// start the loop
 				for($j=0;$j<3;$j++){
-					if($state[$i][$j]!== 0){	//	if free	
+					if($state[$i][$j] == 0){	//	if free	
+						var_dump($state);
 						$aisign2= $aisign; // alias sign fo reuse 
 						$aisign2=1;	// translate aisign for program purpose
 						$state[$i][$j]= $aisign2;	// add a mark to the actual cell
-						echo $state[$i][$j].' ';
-						$cellval = mini($state, $turn +1,$aisign,$humansign);	// evaluate the cell with mini funct simulating opponent's choices, return the evaluated cells
-						//$cellval = rand(1,10);	// test
+						var_dump($state);
+						$cellval = mini($state, $turn +1,$aisign,$humansign);	// evaluate the cell with mini funct simulating
+						// opponent's choices, return the evaluated cells
+						// send the state of the changed board , num of turn +1 to simulate match
+						// send the val of ai and human signs 
+						$r1=rand(0,2);	// test purpose
+						$r2=rand(0,2);
+						$cellval = $state[$r1][$r2];
 						echo $cellval;
-		                if($cellval > $max){		// if value is greater the max
+		                if($cellval > $max){		// if value is greater than the max
 		                    $max = $cellval;        // chose that value cause best move
 		                    $index_i=$i;		// store the i index 
 		                    $index_j=$j;		// store the j index
@@ -34,6 +45,7 @@ function play($state,$aisign,$turn,$humansign){
 		                    $playnow=$nextstate;	
 		                }
 		            	$state[$i][$j]=0;	// reset the cell value
+		            	var_dump($playnow);
 					}	
 				}
 			}
@@ -46,13 +58,13 @@ function play($state,$aisign,$turn,$humansign){
 
 function mini($state,$turn,$humansign,$aisign){
     	$min = 100;
-    if ($turn == 9 or win($state) != 0){	// check for wins or draw								<-- WIN
+    if ($turn == 9 or win($state,$turn,$humansign,$aisign) != 0){	// check for wins or draw								<-- WIN
         return value($state,$aisign,$humansign);		// else, send the evalued game plan at the end of the simulated match
     }
     for($i=0;$i<3;$i++){		// foreach cells
         for($j=0;$j<3;$j++){
 			if($state[$i][$j]	!== 0){	//	if free	
-				$humansign2= $humansign; // alias sign fo reuse 
+				$humansign2= $humansign; // alias sign to reuse 
 				$humansign2=1;	// translate aisign for program purpose
                 $state[$i][$j] = $humansign;	// add a mark to the actual cell
                 $cellval = maxi($state, $turn +1,$aisign,$humansign);	// evaluate the cells sending the MAXI func 		<-- MAXI 
@@ -71,7 +83,7 @@ function mini($state,$turn,$humansign,$aisign){
 
 function maxi($state,$turn,$aisign,$humansign){	// function for maximiser player
    		$max = -100;		// give a value to maximiser player to subtract every turn and to split in values
-    if ($turn == 9 || win($state) != 0){	// check for wins or draw									<-- WIN
+    if ($turn == 9 || win($state,$turn,$humansign,$aisign) != 0){	// check for wins or draw									<-- WIN
         return value($state,$aisign,$humansign);		// else, send the evalued game plan								<-- VALUE
     }
     for($i=0;$i<3;$i++){	// for each cell
@@ -99,8 +111,8 @@ function value($state,$aisign,$humansign){	 // Value of the state
             }
         }
     }
-    if (win($state) != 0) {	// check winner state___________						<-- WIN
-        $winner = win($state);											//    <-- WIN
+    if (win($state,$turn,$humansign,$aisign) != 0) {	// check winner state___________						<-- WIN
+        $winner = win($state,$turn,$humansign,$aisign);											//    <-- WIN
         if($winner === $aisign){
             return 10 - $played;
         }	elseif($winner === $humansign) {
@@ -127,7 +139,8 @@ function series($state){
 
 }
 
-function win($testme){
+function win($state,$turn,$humansign,$aisign){
+	$testme=$state;
 	for($j=0;$j<3;$j++){
 
 	}
