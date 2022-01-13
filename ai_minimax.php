@@ -14,7 +14,7 @@ function ia($board,$sign){	// <---- has to be kept for test purpose
 		$state=array_chunk($state, 3);	// divide the array in 3 chunks to square it
 
 function play($state,$aisign,$turn,$humansign){
-   			$max = -10;		// give a value to moves to compare it with mini		
+   			$max = -100;		// give a value to moves to compare it with mini		
 			$temp=$state; 		// get the state to reuse 
 			for($i=0;$i<3;$i++){	// start the loop
 				for($j=0;$j<3;$j++){
@@ -23,8 +23,8 @@ function play($state,$aisign,$turn,$humansign){
 						$aisign2=1;	// translate aisign for program purpose
 						$state[$i][$j]= $aisign2;	// add a mark to the actual cell
 						echo $state[$i][$j].' ';
-						//$cellval = mini($state, $turn +1,$aisign,$humansign);	// evaluate the cell with mini funct simulating opponent's choices, return the evaluated cells
-						$cellval = rand(1,10);
+						$cellval = mini($state, $turn +1,$aisign,$humansign);	// evaluate the cell with mini funct simulating opponent's choices, return the evaluated cells
+						//$cellval = rand(1,10);	// test
 						echo $cellval;
 		                if($cellval > $max){		// if value is greater the max
 		                    $max = $cellval;        // chose that value cause best move
@@ -39,6 +39,31 @@ function play($state,$aisign,$turn,$humansign){
 			}
 			echo $playnow;
 
+}
+
+// MINIMiSER function to act as the minimiser player------------------------------
+// this means that this player strategy is to play the smallest value possible	||
+
+function mini($state,$turn,$humansign,$aisign){
+    	$min = 100;
+    if ($turn == 9 or win($state) != 0){	// check for wins or draw								<-- WIN
+        return value($state,$aisign,$humansign);		// else, send the evalued game plan at the end of the simulated match
+    }
+    for($i=0;$i<3;$i++){		// foreach cells
+        for($j=0;$j<3;$j++){
+			if($state[$i][$j]	!== 0){	//	if free	
+				$humansign2= $humansign; // alias sign fo reuse 
+				$humansign2=1;	// translate aisign for program purpose
+                $state[$i][$j] = $humansign;	// add a mark to the actual cell
+                $cellval = maxi($state, $turn +1,$aisign,$humansign);	// evaluate the cells sending the MAXI func 		<-- MAXI 
+                if($cellval < $min) {		// if value is smaller than the min
+                    $min = $cellval;        // chose that value
+                    $state[$i][$j] = 0;		// reset the cells
+                }
+            }
+        }
+    }
+    return $min; 		// return the result of min as an int fo further evaluation 
 }
 
 // MAXIMiSER function to act as the maximiser player------------------------------
@@ -64,28 +89,6 @@ function maxi($state,$turn,$aisign,$humansign){	// function for maximiser player
     return $max; 		// return the result of max as an int fo further evaluation 
 }
 
-// MINIMiSER function to act as the minimiser player------------------------------
-// this means that this player strategy is to play the smallest value possible	||
-
-function mini($state,$turn,$humansign,$aisign){
-    	$min = 10;
-    if ($turn == 9 or win($state) != 0){	// check for wins or draw								<-- WIN
-        return value($state,$aisign,$humansign);		// else, send the evalued game plan
-    }
-    for($i=0;$i<3;$i++){		// foreach cells
-        for($j=0;$j<3;$j++){
-			if($state[$i][$j]	!== 0){	//	if free	
-                $state[$i][$j] = $humansign;	// add a mark to the actual cell
-                $cellval = maxi($state, $turn +1,$aisign,$humansign);	// evaluate the cells sending the MAXI func 		<-- MAXI 
-                if($cellval < $min) {		// if value is smaller than the min
-                    $min = $cellval;        // chose that value
-                    $state[$i][$j] = 0;		// reset the cells
-                }
-            }
-        }
-    }
-    return $min; 		// return the result of min as an int fo further evaluation 
-}
 
 function value($state,$aisign,$humansign){	 // Value of the state   
     $played = 0;    //check played cells__________
@@ -99,18 +102,18 @@ function value($state,$aisign,$humansign){	 // Value of the state
     if (win($state) != 0) {	// check winner state___________						<-- WIN
         $winner = win($state);											//    <-- WIN
         if($winner === $aisign){
-            return 1000 - $played;
+            return 10 - $played;
         }	elseif($winner === $humansign) {
-            return -1000 + $played;
+            return -10 + $played;
         }	else {
             return 0;
         }
     }
-    $p1wins = 0;    // count wins
-    $p2wins = 0;    // count wins
+    $p1wins = 0;    // count player 1 wins
+    $p2wins = 0;    // count player 2 wins
     
     series($state, $p1wins, $p2wins, 2);			//    <-- SERIES
-    return $p1wins - $p2wins;
+    return $p1wins - $p2wins;	// return the difference between the two players count of victories
 } 
 
 // function to count the simulation of turns and check winning states
