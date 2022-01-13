@@ -135,18 +135,13 @@ function value($state,$turn,$aisign,$humansign){	 // Value of the state
             return 10 - $played;
         }	elseif($winner === $humansign) {
             return -10 + $played;
-        }	else {
-            return 0;			//<------ it stops here for now_____________________________________________________________________-
-        }
+        }	else {	return 0;	}
     }
     $p1wins = 0;    // count player 1 wins
     $p2wins = 0;    // count player 2 wins
-    
     series($state, $p1wins, $p2wins, 2);	// check the series num of the 2 allineated signs  	//    <-- SERIES
     return $p1wins - $p2wins;	// return the difference between the two players count of victories
-} 
-
-
+}
 
 function win($state,$turn,$humansign,$aisign){
 	$testme=$state;
