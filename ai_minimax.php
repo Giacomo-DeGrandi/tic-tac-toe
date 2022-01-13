@@ -10,24 +10,23 @@ function ia($board,$sign){	// <---- has to be kept for test purpose
 		$humansign=$sign;				// get the human player sign
 		if($sign === 'X'){ $aisign = 2; $humansign = 1;}	// declare and get the aisign and humansign
 		if($sign === 'O'){ $aisign = 1; $humansign = 2;}
-				var_dump($state);
+		//var_dump($state);
 		for($i=0;$i<=isset($state[$i]);$i++){
 			if($state[$i] === 'X'){ $state[$i] = 1;}	// declare and get the aisign and humansign
-			if($state[$i] === 'O'){ $state[$i] = 2;}
+			if($state[$i] === 'O'){ $state[$i] = 2;}	// translate SIGNS for program purpose
 		}
 		$state=array_chunk($state, 3);	// divide the array in 3 chunks to square it
 		//var_dump($state);
+
 function play($state,$aisign,$turn,$humansign){
    			$max = -100;		// give a value to moves to compare it with mini		
 			$temp=$state; 		// get the state to reuse 
 			//var_dump($state);
-			for($i=0;$i<3;$i++){	// start the loop
+			for($i=0;$i<3;$i++){		// start the loop
 				for($j=0;$j<3;$j++){
-					if($state[$i][$j] == 0){	//	if free	
+					if($state[$i][$j] === 0){	//	if free	
 						//var_dump($state);
-						$aisign2= $aisign; // alias sign fo reuse 
-						$aisign2=1;	// translate aisign for program purpose
-						$state[$i][$j]= $aisign2;	// add a mark to the actual cell
+						$state[$i][$j]= $aisign;			// add a mark to the actual cell
 						//var_dump($state);
 						$cellval = mini($state, $turn +1,$aisign,$humansign);	// evaluate the cell with mini funct simulating
 						// opponent's choices, return the evaluated cells
@@ -35,7 +34,7 @@ function play($state,$aisign,$turn,$humansign){
 						// send the val of ai and human signs 
 						$cellval2=$cellval; // test purpose
 						//$r1=rand(0,2); $r2=rand(0,2); $cellval = $state[$r1][$r2];	// test purpose
-						echo $cellval2;
+						//echo $cellval2;
 		                if($cellval > $max){		// if value is greater than the max
 		                    $max = $cellval;        // chose that value cause best move
 		                    $index_i=$i;		// store the i index 
@@ -57,12 +56,13 @@ function play($state,$aisign,$turn,$humansign){
 
 function mini($state,$turn,$humansign,$aisign){
     	$min = 100;
+    	var_dump($state);
     if ($turn == 9 or win($state,$turn,$humansign,$aisign) != 0){	// check for wins or draw								<-- WIN
         return value($state,$turn,$aisign,$humansign);		// else, send the evalued game plan at the end of the simulated match
     }
     for($i=0;$i<3;$i++){		// foreach cells
         for($j=0;$j<3;$j++){
-			if($state[$i][$j]	!== 0){	//	if free	
+			if($state[$i][$j] === 0){	//	if free	
 				$humansign2= $humansign; // alias sign to reuse 
 				$humansign2=1;	// translate aisign for program purpose
                 $state[$i][$j] = $humansign;	// add a mark to the actual cell
@@ -83,12 +83,12 @@ function mini($state,$turn,$humansign,$aisign){
 
 function maxi($state,$turn,$aisign,$humansign){	// function for maximiser player
    		$max = -100;		// give a value to maximiser player to subtract every turn and to split in values
-    if ($turn == 9 || win($state,$turn,$humansign,$aisign) != 0){	// check for wins or draw									<-- WIN
-        return value($state,$turn,$aisign,$humansign);		// else, send the evalued game plan								<-- VALUE
+    if ($turn == 9 || win($state,$turn,$humansign,$aisign) != 0){	// check for wins or draw			<-- WIN
+        return value($state,$turn,$aisign,$humansign);		// else, send the evalued game plan			<-- VALUE
     }
     for($i=0;$i<3;$i++){	// for each cell
 		for($j=0;$j<3;$j++){
-			if($state[$i][$j]	!== 0){	//	if free	
+			if($state[$i][$j] === 0){	//	if free	
                 $state[$i][$j] = $aisign;	// add a mark to the actual cell
                 $cellval = mini($state, $turn +1,$aisign,$humansign);	// evaluate the cell sending the MINI to play on the last turns  <-- MINI
                 if($cellval > $max){		// if value is greater the max
@@ -104,33 +104,70 @@ function maxi($state,$turn,$aisign,$humansign){	// function for maximiser player
 
 // function to count the simulation of turns and check winning states
 
-function series($state,$turn,$humansign,$aisign){
-	$cell=0;	// the num of the cell to count
-	for($i=0;$i<3;$i++){	//start the count loop
-		for($j=0;$j<3;$j++){
-			$checkp1=0;
-			$checkp2=0;
-			var_dump($state);
-			if($state[$i][$j] == 1 ){	// if the current cell is a 1 ($aisign)
+			//	the state , the series passed by reference, the two player signs and 
+function series($state,&$seriesp1,&$seriesp2,$humansign,$aisign,$cell=0){	// the num of the cells to count
 
+		$seriesp1=0;	//initialise counters SERIES for player 1 
+		$seriesp2=0;	//initialise counters SERIES for player 1 
+
+	for($i=0;$i<3;$i++){		//start the count loop for HORIZONTALS and VERTICALS combos count from 0 to 2 
+								// reinitialise the counter for  VERTICALS checks
+			$checkp1=0;			//initialise counters for player 1 every lines
+			$checkp2=0;			//initialise counters for player 2 every lines
+		for($j=0;$j<3;$j++){	// check who occupy the current cell
+			//var_dump($state);
+			if($state[$i][$j] === $aisign ){	// if the current cell is a 1 ($aisign)
+				$checkp1++;		// p1 made a combo
+				$checkp2=0;		// reset the counter of p2
+				if($state[$i][$j] == $cell){	// a num from 0 to 2 based on which cell indicates that a serie has finished 
+					$seriesp1++;		// count the seerie
+				}
+			} elseif ($state[$i][$j] === $humansign ){
+				$checkp2++;		// p2 made a combo
+				$checkp1=0;		// reset the counter of p1
+				if($state[$i][$j] == $cell){
+					$seriesp2++;	// count the cell
+				}
 			}
+			echo $seriesp1.' seriesp1h';
+			echo $seriesp2.' seriesp2h';
+		}
+		// reinitialise the counter for  VERTICALS checks
+			$checkp1=0;			// reinitialise counters for player 1 every lines
+			$checkp2=0;			// reinitialise counters for player 2 every lines
+		for($j=0;$j<3;$j++){		// start to count VERTICALS
+			//var_dump($state);
+			if($state[$i][$j] === $aisign ){	// if the current cell is a 1 ($aisign)
+				$checkp1++;		// p1 made a combo
+				$checkp2=0;		// reset the counter of p1
+				if($state[$i][$j] == $cell){
+					$seriesp1++;		// count the cell
+				}
+			} elseif ($state[$i][$j] === $humansign ){
+				$checkp2++; // p2 made a combo
+				$checkp1=0;		// reset the counter of p1
+				if($state[$i][$j] == $cell){
+					$seriesp2++;	// count the cell
+				}
+			}
+			echo $seriesp1.' seriesp1v';
+			echo $seriesp2.' seriesp2v';
 		}
 	}
 
 }
-
 
 function value($state,$turn,$aisign,$humansign){	 // Value of the state   
     $played = 0;    //check played cells__________
     for($i=0;$i<3;$i++){
     	for($j = 0;$j<3;$j++){
             if($state[$i][$j] !== 0){	//	if free
-                $played++;			// if cell is played add 1 to played 
+                $played++;		// if cell is played add 1 to played 
             }
         }
     }
-    if (win($state,$turn,$humansign,$aisign) != 0) {	// check winner state___________						<-- WIN
-        $winner = win($state,$turn,$humansign,$aisign);											//    <-- WIN
+    if (win($state,$turn,$humansign,$aisign) != 0) {	// check winner state___________	<-- WIN
+        $winner = win($state,$turn,$humansign,$aisign);									//    <-- WIN
         if($winner === $aisign){
             return 10 - $played;
         }	elseif($winner === $humansign) {
@@ -139,14 +176,16 @@ function value($state,$turn,$aisign,$humansign){	 // Value of the state
     }
     $p1wins = 0;    // count player 1 wins
     $p2wins = 0;    // count player 2 wins
-    series($state, $p1wins, $p2wins, 2);	// check the series num of the 2 allineated signs  	//    <-- SERIES
+    series($state, $p1wins, $p2wins,$aisign,$humansign, 2);	// check the series num of the 2 allineated signs  	//    <-- SERIES
     return $p1wins - $p2wins;	// return the difference between the two players count of victories
 }
 
 function win($state,$turn,$humansign,$aisign){
 	$testme=$state;
 	for($j=0;$j<3;$j++){
+		for($i=0;$i<3;$i++){
 
+		}
 	}
 }
 
