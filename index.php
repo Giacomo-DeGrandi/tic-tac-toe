@@ -15,7 +15,7 @@ session_start();
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <body>
 	<header>
-
+		<a href="dev.php">redev page</a> 
 	</header>
 <main>
 	<form method="post">
