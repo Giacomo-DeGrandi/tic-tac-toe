@@ -65,32 +65,29 @@ if(isset($_POST['X'])){			// initialise the game____
 // table ________________________________________________________________
 
 if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
+	echo '<style>.choice{pointer-events: none;} </style>';
 	echo '<table>';
 	for($i=0;$i<3;$i++){
 		echo '<tr>';
 		for($j=0;$j<3;$j++){		
-			//$cell = 3*$j+$i;	// translate the board into 0,1,2,3,4,5,6,7,8 instead of 0,0,0,3,3,3,6,6,6 ..
 			echo '<td>';
 			if($_SESSION['state'][$i][$j]===0){
 				$cell=$i.','.$j;
-				echo '<form method="post"><input type="submit" name="'.$cell.'" value="" class="cells">';
+				echo '<form method="post" ><input type="submit" name="'.$cell.'" value="" class="cells">';
 				if(isset($_POST[$cell])){
 					$_SESSION['state'][$i][$j]=$_SESSION['player'];	//add a mark to the cell
 					$_SESSION['turn']++;
-					header('Location:dev.php');	
+					header('Location:dev.php');
 				}
 			echo '</form></td>';
 			} elseif($_SESSION['state'][$i][$j]!==0){
-				//echo 'b';
-				//var_dump($_SESSION['state']);
 				if($_SESSION['state'][$i][$j] == $_SESSION['player']){
-					echo '<form method="post"><input type="submit" name="'.$_SESSION['state'][$i][$j].'" value="'.$_SESSION['humansign'].'" class="cells"></form></td>';
+					echo '<form method="post"><input type="submit" name="'.$_SESSION['state'][$i][$j].'" value="'.$_SESSION['humansign'].'" class="cells'.$i.'_'.$j.'"  ><style>.cells'.$i.'_'.$j.'{ pointer-events: none; }</style></form></td>';
 				}
 				if($_SESSION['state'][$i][$j] ==$_SESSION['player2']){
-					echo '<form method="post"><input type="submit" name="'.$_SESSION['state'][$i][$j].'" value="'.$_SESSION['aisign'].'" class="cells"></form></td>';	
+					echo '<form method="post"><input type="submit" name="'.$_SESSION['state'][$i][$j].'" value="'.$_SESSION['aisign'].'" class="cells'.$i.'_'.$j.'"  ><style>.cells'.$i.'_'.$j.'{ pointer-events: none; }</style></form></td>';
 				}
 			} else {
-					//echo 'e';
 				echo '<form method="post"><input type="submit" name="'.$_SESSION['state'][$i][$j].'" value="" class="cells"></form></td>';
 			}
 		}
@@ -98,17 +95,43 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 	}
 }
 
+
+
 if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
 	$board=$_SESSION['state'];
 	$sign=$_SESSION['player2'];
 	include 'ai2.php';
 
-	// play__
+	// play_____________________________
 
 	$_SESSION['state']=ia($board,$sign);
 }
 
-/*		FOR LOOP 
+function win($state){
+	var_dump($state);
+	for($i=0;$i<3;$i++){
+		for($j=0;$j<3;$j++){	// horizontals
+			if( $state[$i][0] ===  1 and $state[$i][1] ===  1 and $state[$i][2] ===  1){
+				echo 'win1';
+			}
+			if($state[$i][0] ===  2 and $state[$i][1] ===  2 and $state[$i][2] ===  2){
+				echo 'win2';
+			}
+		}
+	}
+	var_dump($state);
+}
+
+if(isset($_SESSION['state'])){echo win($_SESSION['state']);}
+
+if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
+	echo $_SESSION['turn'];
+		session_destroy();
+	header('Location:dev.php');
+}
+
+
+/*		FOR LOOP TO REUSE
 
 		for($i=0;$i<3;$i++){
 			for($j=0;$j<3;$j++){
