@@ -101,30 +101,11 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
 	$board=$_SESSION['state'];
 	$sign=$_SESSION['player2'];
-	function ia($board, $sign){
-		for($i=0;$i<3;$i++){
-			for($j=0;$j<3;$j++){
-				if($_SESSION['state'][$i][$j]===0){
-					$free=$i.','.$j;
-					$played[]=$free;
-					global $played;
-				}
-
-			}	
-		}
-		//var_dump($played);
-		$test=array_rand($played,1);
-		$test=explode(',',$played[$test]);
-		//var_dump($board);
-		$board[$test[0]][$test[1]]=$sign;
-		return $board;
-	}
+	include 'ai2.php';
 
 	// play__
 
 	$_SESSION['state']=ia($board,$sign);
-
-
 }
 
 /*		FOR LOOP 
