@@ -108,18 +108,26 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'
 }
 
 function win($state){
-	var_dump($state);
-	for($i=0;$i<3;$i++){
-		for($j=0;$j<3;$j++){	// horizontals
-			if( $state[$i][0] ===  1 and $state[$i][1] ===  1 and $state[$i][2] ===  1){
-				echo 'win1';
+	function e3($a,$b,$c){
+		return $a == $b == $c != 0; 
+	}
+	for($i=0;$i<3;$i++){	// horizontals
+		if(e3($state[$i][0],$state[$i][1],$state[$i][2]){
+			if($state[$i][0]===1){
+				return 1;
+			} elseif($state[$i][0]===2){
+				return 2;
 			}
-			if($state[$i][0] ===  2 and $state[$i][1] ===  2 and $state[$i][2] ===  2){
-				echo 'win2';
-			}
+		} elseif(e3($state[0][$i] ===  2 and $state[$i][1] ===  2 and $state[$i][2] ===  2){
+			return 2;
+		}	elseif($state[$i][0] ===  2 and $state[$i][1] ===  2 and $state[$i][2] ===  2){
+			return 2;
 		}
 	}
-	var_dump($state);
+}
+
+if(win($state)==1){ 
+	$_SESSION['end']=1;
 }
 
 if(isset($_SESSION['state'])){echo win($_SESSION['state']);}

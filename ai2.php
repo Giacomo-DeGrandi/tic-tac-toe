@@ -12,7 +12,7 @@ function random($board, $sign){
 	}
 	$test=array_rand($played,1);
 	$test=explode(',',$played[$test]);
-	$board[$test[0]][$test[1]]=$sign;
+	$board[$test[0]][$test[1]]=$sign; 
 	$_SESSION['turn']++;
 	return $board;
 }
