@@ -61,19 +61,6 @@ function ia($board,$sign){	//
 	$board=$move;
 	return $board;
 	}
-	function win($state){
-	for($i=0;$i<3;$i++){
-		for($j=0;$j<3;$j++){	// horizontals
-			if( $state[$i][0] ===  1 and $state[$i][1] ===  1 and $state[$i][2] ===  1){
-				return 
-			}
-			if($state[$i][0] ===  2 and $state[$i][1] ===  2 and $state[$i][2] ===  2){
-				echo 'win2';
-			}
-		}
-	}
-	for($i=)
-	var_dump($state);
 } 
 }
 

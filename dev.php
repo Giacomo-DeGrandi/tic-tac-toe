@@ -104,37 +104,44 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'
 
 	// play_____________________________
 
-	$_SESSION['state']=ia($board,$sign);
+	$_SESSION['state']=random($board,$sign);
 }
+
 
 function win($state){
-	function e3($a,$b,$c){
-		return $a == $b == $c != 0; 
-	}
-	for($i=0;$i<3;$i++){	// horizontals
-		if(e3($state[$i][0],$state[$i][1],$state[$i][2]){
-			if($state[$i][0]===1){
-				return 1;
-			} elseif($state[$i][0]===2){
-				return 2;
-			}
-		} elseif(e3($state[0][$i] ===  2 and $state[$i][1] ===  2 and $state[$i][2] ===  2){
-			return 2;
-		}	elseif($state[$i][0] ===  2 and $state[$i][1] ===  2 and $state[$i][2] ===  2){
-			return 2;
+	$win1=0;
+	$win2=0;
+	for($i=0;$i<3;$i++){	
+			if  ($state[$i][0]===1 and $state[$i][1]===1 and $state[$i][2]===1){	return 1; $win1++; // horizontals
+		} elseif($state[$i][0]===2 and $state[$i][1]===2 and $state[$i][2]===2){	return 2; $win2++; // horizontals
+		} elseif($state[0][$i]===1 and $state[1][$i]===1 and $state[2][$i]===1){	return 1; $win1++; // verticals
+		} elseif($state[0][$i]===2 and $state[1][$i]===2 and $state[2][$i]===2){	return 2; $win2++; // vertical
+		} elseif($state[0][0]===1 and $state[1][1]===1 and $state[2][2]===1){ 	return 1;	$win1++; // diag
+		} elseif($state[0][0]===2 and $state[1][1]===2 and $state[2][2]===2){ 	return 2;	$win2++; // diag
+		} elseif($state[2][0]===1 and $state[1][1]===1 and $state[0][2]===1){	return 1;	$win1++; // diag2
+		} elseif($state[2][0]===2 and $state[1][1]===2 and $state[0][2]===2){	return 2; 	$win2++; // diag2
 		}
 	}
-}
-
-if(win($state)==1){ 
-	$_SESSION['end']=1;
+	$checkdraw=0;
+	for($i=0;$i<3;$i++){
+		for($j=0;$j<3;$j++){
+			if($state[$i][$j]===0){	// count free cells, the match it's not finished
+				$checkdraw++;
+			}
+		}
+	}
+	if($checkdraw>0 and $win1==0 and $win2==0){	// if the match is not finish and we don't have winner return 'play'(0)
+		return 0;
+	}
+	if($checkdraw===0 and $win1==0 and $win2==0){	// if the match is not finish and we don't have winner return 'tie'(3)
+		return 3;
+	}
 }
 
 if(isset($_SESSION['state'])){echo win($_SESSION['state']);}
 
 if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
-	echo $_SESSION['turn'];
-		session_destroy();
+	session_destroy();
 	header('Location:dev.php');
 }
 
