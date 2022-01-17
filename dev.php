@@ -115,14 +115,11 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'
 						$state[$i][$j]=$sign;  // add a test mark
 						$value=minimax($state,$sign,$depth=0);	//call minimax to test	---> state sent state[$i][$j]=our sign
 						$state[$i][$j]=0;  // reset the state
-						$newmove=$bestmove+$value;	//need a value ! <--
-						if($newmove<$bestmove){
-							$state[$i][$j]=$sign;
+						if($value<$bestmove){
 							$i_ind=$i;
 							$j_ind=$j;
-							$newstate=$newstate[$i_ind][$j_ind];	// cause this value is the new bestmove
-							// this will be the new state value
-							return $newstate;
+							$state=$state[$i_ind][$j_ind];	// cause this value is the new bestmove
+							return $state;
 						}
 						return $state;
 					}
@@ -130,7 +127,7 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'
 			}
 		}
 
-	var_dump(move($state,$sign));
+	//var_dump(move($state,$sign));
 	return move($state,$sign);
 	}
 
@@ -141,7 +138,7 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'
 
 //___SCORES___//		VALUES HUB
 function scores($state){
-	var_dump($state);
+	//var_dump($state);
 	if(win($state)==1){			// if p1
 		return -10;
 	} elseif (win($state)==2){	// if p2
@@ -171,7 +168,8 @@ function maxi($state,$depth,$sign){
 $sign=$_SESSION['player'];
 $best=+10;
 $score=scores($state);
-if($score > $best || $depth== 9 ){
+echo $score;
+if($score > $best || $depth===9 ){
 	return $score;
 }
 	for($i=0;$i<3;$i++){
@@ -191,67 +189,19 @@ function mini($state,$depth,$sign){
 $sign=$_SESSION['player2'];
 $best=-10;
 $score=scores($state);
-if($score > $best || $depth==9 ){
+if($score < $best || $depth===9){
 	return $score;
 }
 	for($i=0;$i<3;$i++){
 		for($j=0;$j<3;$j++){	//	check each cell
 			if($state[$i][$j]===0){	// if free
-				$state[$i][$j]=$sign;  // add human mark cause in play we added ai
+				$state[$i][$j]=$sign;  // add ai mark cause in play we added human
 				minimax($state,$depth+1,$sign);
 				$state[$i][$j]=0;  // reset
 			}
 		}	
 	}
 }
-
-
-//winne //function ia
-		/*
-		$bestmove=-1000;
-			if(winner($state) != 0){
-				$score=scores(winner($state));
-				$score=$bestmove-$score;
-			} elseif($depth===0||$depth%2===0){
-				maxi($state,$depth);
-			} elseif($depth===1||$depth%2!==0){
-				mini($state,$depth);
-			}
-		}
-		//_____MAXI______//
-		function maxi($state,$depth){
-			echo 'maxi';/*
-		$bestmove=-1000;
-			for($i=0;$i<3;$i++){
-				for($j=0;$j<3;$j++){	//	check each cell
-					if($state[$i][$j]===0){	// if free
-						$state[$i][$j]=$sign;  // add a mark
-						$value=minimax($state,$depth+1);	//	call minimax to test
-						$state[$i][$j]=0;  // reset the state
-						$value=max($value,$bestmove);
-					}
-				}	
-			}
-		return $value;
-		}		
-
-		//_____MINI______//
-		function mini($state,$depth){
-		echo 'mini';/*
-		$bestmove=-1000;
-			for($i=0;$i<3;$i++){
-				for($j=0;$j<3;$j++){	//	check each cell
-					if($state[$i][$j]===0){	// if free
-						$state[$i][$j]=$sign;  // add a mark
-						$value=minimax($state,$depth+1);	//	call minimax to test
-						$state[$i][$j]=0;  // reset the state
-						$value=min($value,$bestmove);
-					}
-				}	
-			}
-		return $value;
-		}*/
-
 
 
 function win($state){
@@ -292,15 +242,6 @@ if(isset($_SESSION['turn']) and $_SESSION['turn']=== 10){
 }
 
 
-/*		FOR LOOP TO REUSE
-
-		for($i=0;$i<3;$i++){
-			for($j=0;$j<3;$j++){
-			
-			}	
-		}
-
-*/
 
 ?>
 </main>
