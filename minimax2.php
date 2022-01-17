@@ -29,6 +29,34 @@ function ia($board,$sign){
 	echo 'minimax';
 	return 300;
 	/*
+
+	
+
+	//_____MINI______//	
+	function mini($state,$depth,$sign){
+		echo 'mini!';
+	var_dump($state);
+	$sign=$_SESSION['player2'];
+	$best=-10;
+	$score=scores($state);
+	echo ' '.$score.'-scoremini-';
+	if($score = $best || $depth===9){
+		return $score;
+	}
+		for($i=0;$i<3;$i++){
+			for($j=0;$j<3;$j++){	//	check each cell
+				if($state[$i][$j]===0){	// if free
+					$state[$i][$j]=$sign;  // add ai mark cause in play we added human
+					maxi($state,$depth+1,$sign);
+					$state[$i][$j]=0;  // reset
+				}
+			}	
+		}
+	}
+
+
+
+
 	$bestmove=-1000;
 		if(winner($state) != 0){
 			$score=scores(winner($state));
