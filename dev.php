@@ -2,8 +2,6 @@
 
 session_start();
 
-//for()
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -77,7 +75,7 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 				if(isset($_POST[$cell])){
 					$_SESSION['state'][$i][$j]=$_SESSION['player'];	//add a mark to the cell
 					$_SESSION['turn']++;
-					header('Location:dev.php');
+					//header('Location:dev.php');
 				}
 			echo '</form></td>';
 			} elseif($_SESSION['state'][$i][$j]!==0){
@@ -100,12 +98,160 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
 	$board=$_SESSION['state'];
 	$sign=$_SESSION['player2'];
-	include 'ai2.php';
+	$_SESSION['value']=true;
+	$value=$_SESSION['value'];
 
-	// play_____________________________
+	function ia($board,$sign){	 
+		$state=$_SESSION['state'];
+		$sign=$_SESSION['player2'];
 
-	$_SESSION['state']=random($board,$sign);
+		//_____MOVE______//
+		function move($state,$sign){
+		$bestmove=-10;
+		echo 'move';														
+			for($i=0;$i<3;$i++){
+				for($j=0;$j<3;$j++){	//	check each cell
+					if($state[$i][$j]===0){	// if free
+						$state[$i][$j]=$sign;  // add a test mark
+						$value=minimax($state,$sign,$depth=0);	//call minimax to test	---> state sent state[$i][$j]=our sign
+						$state[$i][$j]=0;  // reset the state
+						$newmove=$bestmove+$value;	//need a value ! <--
+						if($newmove<$bestmove){
+							$state[$i][$j]=$sign;
+							$i_ind=$i;
+							$j_ind=$j;
+							$newstate=$newstate[$i_ind][$j_ind];	// cause this value is the new bestmove
+							// this will be the new state value
+							return $newstate;
+						}
+						return $state;
+					}
+				}	
+			}
+		}
+
+	var_dump(move($state,$sign));
+	return move($state,$sign);
+	}
+
+	$_SESSION['state']=ia($board,$sign);
+	$_SESSION['turn']++;
 }
+
+
+//___SCORES___//		VALUES HUB
+function scores($state){
+	var_dump($state);
+	if(win($state)==1){			// if p1
+		return -10;
+	} elseif (win($state)==2){	// if p2
+		return +10;
+	} elseif (win($state)==3){	// if tie 
+		return 0;		
+	}
+}
+
+//_____MINIMAX______//		RECURSION CHECK & STOP
+function minimax($state,$sign,$depth){
+	echo 'minimax';	//has to send a value 10,-10
+	$best=-10;		// value for minimax as -10 cause we are the minimising player
+	$score=scores($state);	// we check the scores of this state
+	echo $score;
+	if($score > $best){
+		return $score;
+	} else {
+		maxi($state,$sign,$depth+1);	// we send the state 
+	}
+}
+
+
+//_____MAXI______//		RECURSION LOOP A, SEND TO --------------->
+function maxi($state,$depth,$sign){
+	echo 'maxi';
+$sign=$_SESSION['player'];
+$best=+10;
+$score=scores($state);
+if($score > $best || $depth== 9 ){
+	return $score;
+}
+	for($i=0;$i<3;$i++){
+		for($j=0;$j<3;$j++){	//	check each cell
+			if($state[$i][$j]===0){	// if free
+				$state[$i][$j]=$sign;  // add human mark cause in play we added ai
+				mini($state,$depth+1,$sign);
+				$state[$i][$j]=0;  // reset
+			}
+		}	
+	}
+}
+
+//_____MINI______//		RECURSION LOOP B, RECEIVE FROM <---------------
+function mini($state,$depth,$sign){
+	echo 'mini';
+$sign=$_SESSION['player2'];
+$best=-10;
+$score=scores($state);
+if($score > $best || $depth==9 ){
+	return $score;
+}
+	for($i=0;$i<3;$i++){
+		for($j=0;$j<3;$j++){	//	check each cell
+			if($state[$i][$j]===0){	// if free
+				$state[$i][$j]=$sign;  // add human mark cause in play we added ai
+				minimax($state,$depth+1,$sign);
+				$state[$i][$j]=0;  // reset
+			}
+		}	
+	}
+}
+
+
+//winne //function ia
+		/*
+		$bestmove=-1000;
+			if(winner($state) != 0){
+				$score=scores(winner($state));
+				$score=$bestmove-$score;
+			} elseif($depth===0||$depth%2===0){
+				maxi($state,$depth);
+			} elseif($depth===1||$depth%2!==0){
+				mini($state,$depth);
+			}
+		}
+		//_____MAXI______//
+		function maxi($state,$depth){
+			echo 'maxi';/*
+		$bestmove=-1000;
+			for($i=0;$i<3;$i++){
+				for($j=0;$j<3;$j++){	//	check each cell
+					if($state[$i][$j]===0){	// if free
+						$state[$i][$j]=$sign;  // add a mark
+						$value=minimax($state,$depth+1);	//	call minimax to test
+						$state[$i][$j]=0;  // reset the state
+						$value=max($value,$bestmove);
+					}
+				}	
+			}
+		return $value;
+		}		
+
+		//_____MINI______//
+		function mini($state,$depth){
+		echo 'mini';/*
+		$bestmove=-1000;
+			for($i=0;$i<3;$i++){
+				for($j=0;$j<3;$j++){	//	check each cell
+					if($state[$i][$j]===0){	// if free
+						$state[$i][$j]=$sign;  // add a mark
+						$value=minimax($state,$depth+1);	//	call minimax to test
+						$state[$i][$j]=0;  // reset the state
+						$value=min($value,$bestmove);
+					}
+				}	
+			}
+		return $value;
+		}*/
+
 
 
 function win($state){
@@ -140,7 +286,7 @@ function win($state){
 
 if(isset($_SESSION['state'])){echo win($_SESSION['state']);}
 
-if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
+if(isset($_SESSION['turn']) and $_SESSION['turn']=== 10){
 	session_destroy();
 	header('Location:dev.php');
 }
