@@ -23,7 +23,7 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'
 					if($state[$i][$j]===0){	// if free
 						$state[$i][$j]=$sign;  // add a test mark
 						$score=mini($state,$sign,$depth=0);	// get score for the cell;
-						var_dump($score);
+						//var_dump($score);
 						if($score>$bestmove){
 							$bestmove=$score;
 							$newstate=$state;
@@ -32,7 +32,7 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'
 					}
 				}
 			}
-			var_dump($newstate);
+			//var_dump($newstate);
 			return $newstate;
 
 		}
@@ -57,7 +57,7 @@ function maxi($state,$depth,$sign){
 //echo '-maxi';
 $score=evaluate($state,$sign);
 if($score==1){
-	$score=$score+series($state,$sign);	
+	$score=$score-series($state,$sign);	
 	return $score;
 } elseif ($score!=0 and $score!=1) {
 	return $score;
@@ -89,7 +89,7 @@ function mini($state,$depth,$sign){
 //echo '-mini';
 $score=evaluate($state,$sign);
 if($score==1){
-	$score=$score+series($state,$sign);	
+	$score=$score-series($state,$sign);	
 	return $score;
 } elseif ($score!=0 and $score!=1) {
 	return $score;
