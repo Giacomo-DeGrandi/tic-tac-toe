@@ -75,7 +75,7 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 				if(isset($_POST[$cell])){
 					$_SESSION['state'][$i][$j]=$_SESSION['player'];	//add a mark to the cell
 					$_SESSION['turn']++;
-					header('Location:dev.php'); //________________________ header
+					//header('Location:dev.php'); //________________________ header
 				}
 			echo '</form></td>';
 			} elseif($_SESSION['state'][$i][$j]!==0){

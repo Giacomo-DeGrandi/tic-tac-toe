@@ -1,6 +1,7 @@
 <?php
 
-
+$_SESSION['score']=0;
+$_SESSION['score2']=0;
 
 if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
 	$board=$_SESSION['state'];
@@ -16,165 +17,167 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'
 		//echo 'move!';
 		$scorelist=[];
 		$stateorder=[];
-		$_SESSION['scoremax']=0;
-		$_SESSION['scoremin']=0;
+		$bestmove=-1000;
 			for($i=0;$i<3;$i++){
 				for($j=0;$j<3;$j++){	//	check each cell
 					if($state[$i][$j]===0){	// if free
 						$state[$i][$j]=$sign;  // add a test mark
-						$score=minimax($state,$sign,$_SESSION['depth']=0);	// get score for the cell;
-						//$scoreseries=series($state,$_SESSION['player']);
-						//$score=$scoreseries+$score;
-						$scorelist[]=$score;
-						$stateorder[]=$state;
+						$score=mini($state,$sign,$depth=0);	// get score for the cell;
+						var_dump($score);
+						if($score>$bestmove){
+							$bestmove=$score;
+							$newstate=$state;
+						}
 						$state[$i][$j]=0;  // reset the cell
 					}
 				}
 			}
-			var_dump($scorelist);
-			$index = array_search(min($scorelist), $scorelist);
-			var_dump($index);
-			var_dump($stateorder);
-
-			return $stateorder[$index];
+			var_dump($newstate);
+			return $newstate;
 
 		}
 
 	// CALL MOVE
+
 	$move=move($state,$sign);
-	//var_dump($move);
 	return $move;
+
 	}
 
 	// CALL IA
+
 	$_SESSION['state']=ia($board,$sign);
-}
-
-
-
-
-//_____MINIMAX______//	__________________________________________________________________
-function minimax($state,$sign,$depth){
-
-	//echo '-miniMax';
-		// VALUES AND TURNS HUB
-	$_SESSION['score']=0;
-	$_SESSION['score2']=0;
-	if($sign===$_SESSION['player'] ){	// we simulate turns every time minimax is called
-		$_SESSION['score']=maxi($state,$_SESSION['depth'],$sign,$_SESSION['score'])+$_SESSION['score'];	
-	} elseif ($sign===$_SESSION['player2'] ){
-		$_SESSION['score2']=mini($state,$_SESSION['depth'],$sign,$_SESSION['score2'])+$_SESSION['score2'];
-	}
-	$score=$_SESSION['score']-$_SESSION['score2'];
-	return $score;
 
 }
+
 
 
 //_____MAXI______//
-function maxi($state,$depth,$sign,$score){
+function maxi($state,$depth,$sign){
 //echo '-maxi';
-$score=scores($state);	// we are now scoring move
-//var_dump($state);
-//var_dump($score);
-if($score!==0){
+$score=evaluate($state,$sign);
+if($score==1){
+	$score=$score+series($state,$sign);	
 	return $score;
-}
-$bestmove=10;
-	for($i=0;$i<3;$i++){
-		for($j=0;$j<3;$j++){	//	check each cell
-			if($state[$i][$j]===0){	// if free
-				$state[$i][$j]=$sign;  // add human mark cause in play we added ai
-				$score=mini($state,$_SESSION['depth']++,$_SESSION['player2'],$_SESSION['score']);
-				$scoreseries=series($state,$_SESSION['player']);
-				$score=$score+$scoreseries;
-				if($score>$bestmove){
-				$_SESSION['score']=$score+$_SESSION['score'];
-				$bestmove=$_SESSION['score']+1;
-				} else {
-					$score=$score+1;	// turn value
+} elseif ($score!=0 and $score!=1) {
+	return $score;
+} else { 
+	$bestmove=-1000;
+	$pawns=0;
+		for($i=0;$i<3;$i++){
+			for($j=0;$j<3;$j++){	//	check each cell
+				if($state[$i][$j]==$sign){
+					$pawns++;
 				}
-				$state[$i][$j]=0;
-			}
-		}	
+				if($state[$i][$j]===0){	// if free
+					$state[$i][$j]=$sign;  // add human mark cause in play we added ai
+					$score=mini($state,$depth++,$sign);
+					if($score>$bestmove){
+					$bestmove=$score;
+					}
+					$state[$i][$j]=0;
+				}
+			}	
+		}
+		return $bestmove-$pawns;
 	}
-	//var_dump($_SESSION['score']);
-	return $score;
 }
 
 //_____MINI______//	
 
-function mini($state,$depth,$sign,$score){
+function mini($state,$depth,$sign){
 //echo '-mini';
-$score=scores($state);
-//var_dump($state);
-//var_dump($score);
-if($score!==0){
+$score=evaluate($state,$sign);
+if($score==1){
+	$score=$score+series($state,$sign);	
 	return $score;
-}
-$bestmove=-10;
-	for($i=0;$i<3;$i++){
-		for($j=0;$j<3;$j++){	//	check each cell
-			if($state[$i][$j]===0){	// if free
-				$state[$i][$j]=$sign;  // add ai mark cause in play we added human
-				$score=maxi($state,$_SESSION['depth']++,$_SESSION['player'],$_SESSION['score2']);
-				$scoreseries=series($state,$_SESSION['player2']);
-				$score=$score+$scoreseries;
-				if($score<$bestmove){
-					$_SESSION['score2']=$score+$_SESSION['score2'];
-					$bestmove=$_SESSION['score2']+1;
-				} else {
-					$score= $score+1;	// turn value
+} elseif ($score!=0 and $score!=1) {
+	return $score;
+} else {
+	$bestmove=1000;
+	$pawns=0;
+		for($i=0;$i<3;$i++){
+			for($j=0;$j<3;$j++){	//	check each cell
+				if($state[$i][$j]==$sign){
+					$pawns++;
 				}
-				$state[$i][$j]=0;
-			}
-		}	
+				if($state[$i][$j]===0){	// if free
+					$state[$i][$j]=$sign;  // add ai mark cause in play we added human
+					$score=maxi($state,$depth++,$_SESSION['player']);
+					if($score<$bestmove){
+						$bestmove=$score;
+					}
+					$state[$i][$j]=0;
+				}
+			}	
+		}
+	return $bestmove+$pawns;
 	}
-	//var_dump($_SESSION['score2']);
-	return $score;
 }
 
+	//_____series  count series of 2 pawns
+		function series($state,$player){
+			$scoreserie=0;
+			$scoreserie1=0;
+			$scoreserie2=0;
+			for($i=0;$i<3;$i++){
+				if( $state[$i][0]==$player and $state[$i][1]==$player || 
+					$state[$i][1]==$player and $state[$i][2]==$player){		//_horizontals
+					if($player==1){
+						$scoreserie1++;
+					}
+					if($player==2){
+						$scoreserie2++;
+					}
+				}
+				if(	$state[0][$i]==$player and $state[1][$i]==$player ||
+					$state[1][$i]==$player and $state[2][$i]==$player){		//_verticals
+					if($player==1){
+						$scoreserie1++;
+					}
+					if($player==2){
+						$scoreserie2++;
+					}
+				}
+				if( $state[0][0]==$player and $state[1][1]==$player||
+					$state[1][1]==$player and $state[2][2]==$player){
+					if($player==1){
+						$scoreserie1++;
+					}
+					if($player==2){
+						$scoreserie2++;
+					}		
+				}
+				if( $state[2][0]==$player and $state[1][1]==$player ||
+					$state[1][1]==$player and $state[0][2]==$player){
+					if($player==1){
+						$scoreserie1++;
+					}
+					if($player==2){
+						$scoreserie2++;
+					}		
+				}
+			}
+			$scoreserie=$scoreserie2-$scoreserie1;
+			return $scoreserie*10;
+		}
 
-//___SCORES___//		SCORES HUB
-function scores($state){
-	//echo '-score';
+
+//___EVALUATE___//		SCORES HUB
+function evaluate($state,$player){
+	
 	$win=win1($state);
 	if($win==1){	// if p1
-		return +10;
+		return -100;
 	} elseif ($win==2){	// if p2
-		return -10;
+		return +100;
 	} elseif ($win==3){	// if tie 
-		return 0;		
+		return 1;		
 	} elseif ($win==0){	// if still playing 
-		return 0;	
-	}
+		return 0;
+	}	//elseif
 }
 
-//_____SERIES_____//    count series of 2 pawns
-
-function series($state,$player){
-	$scoreserie=0;
-	for($i=0;$i<3;$i++){
-		if( $state[$i][0]==$player and $state[$i][1]==$player || 
-			$state[$i][1]==$player and $state[$i][2]==$player){		//_horizontals
-			$scoreserie++;
-		}
-		if(	$state[0][$i]==$player and $state[1][$i]==$player ||
-			$state[1][$i]==$player and $state[2][$i]==$player){		//_verticals
-			$scoreserie++;
-		}
-		if( $state[0][0]==$player and $state[1][1]==$player||
-			$state[1][1]==$player and $state[2][2]==$player){
-			$scoreserie++;		
-		}
-		if( $state[2][0]==$player and $state[1][1]==$player ||
-			$state[1][1]==$player and $state[0][2]==$player){
-			$scoreserie++;		
-		}
-	}
-	return $scoreserie+2;
-
-}
 
 
 function win1($state){
@@ -197,7 +200,7 @@ function win1($state){
 			}
 		}
 	}
-	if($checkdraw<0 ){	// if the match is not finish and we don't have winner return 'play'(0)
+	if($checkdraw<0 ){	// if the match is not finish and we don't have winner yet return 'play'(0)
 		return 0;
 	}
 	if($checkdraw>=0 ){	// if the match is finish and we don't have winner return 'tie'(3)
