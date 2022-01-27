@@ -7,21 +7,20 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 	$human=$_SESSION['player'];
 
 	//____IA______//
-	function ia($state,$sign,$moves){	 
+	function ia($state,$sign){	 
 
 		//_____MOVE______//
-		function move($state,$sign,$moves){
+		function move($state,$sign){
 			//echo 'move!';
 
 			$bestmove=-1000;
-			$depth=0;
 			$scorestate=[];
 				for($i=0;$i<3;$i++){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[$i][$j]===0){	// if free
 							$state[$i][$j]=$sign;  // add a test mark
 							//var_dump($sign);
-							$score=minimax($state,$depth,false,$moves);	// get score for the cell;
+							$score=minimax($state,$depth=0,false);	// get score for the cell;
 							//var_dump($score);
 							$scorestate[]=$state;
 							if($score>$bestmove){
@@ -55,12 +54,12 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 	$moves=$p1+$p2;
 	if($p2<$p1 and ($p1+$p2<=9)){
 		//__call ia______//
-		$_SESSION['state']=ia($board,$sign,$moves);
+		$_SESSION['state']=ia($board,$sign,$depth);
 		$_SESSION['turn']++;	
 	}
 }
 
-function minimax($state,$depth,$max,$moves){
+function minimax($state,$depth,$max){
 	//var_dump($state);
 	$score=winner($state,$depth);
 	if ($score!==1){
@@ -75,7 +74,7 @@ function minimax($state,$depth,$max,$moves){
 						if($state[$i][$j]===0){	// if free
 							$state[$i][$j]=2;  
 							//var_dump($state);
-							$bestmove=max($bestmove,minimax($state,$depth++,!$max,$moves++));	
+							$bestmove=max($bestmove,minimax($state,$depth++,!$max));	
 							$state[$i][$j]=0;
 						}
 					}	
@@ -88,7 +87,7 @@ function minimax($state,$depth,$max,$moves){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[$i][$j]===0){	// if free
 							$state[$i][$j]=1;
-							$bestmove=min($bestmove,minimax($state,$depth++,!$max,$moves++));
+							$bestmove=min($bestmove,minimax($state,$depth++,!$max));
 							$state[$i][$j]=0;
 						}
 					}	
