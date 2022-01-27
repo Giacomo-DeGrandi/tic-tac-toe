@@ -2,26 +2,27 @@
 
 session_start();
 
-
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>tic tac toe</title>
+	<title>DEV</title>
 </head>
 <link rel="stylesheet" type="text/css" href="tris.css">
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <body>
 	<header>
-		<a href="dev.php">redev page</a> 
+		<a href="index.php">index</a>
+		<br>
+		<h5>you're now on page <big>DEV</big></h5>
 	</header>
-<main>
+<main>	
 	<form method="post">
 		<input type="submit" name="reset" value="reset" id="reset">
 	</form>
-	<form method="post">
+	<form method="post" >
 		<input type="submit" name="X" value="X" class="choice">		
 		<input type="submit" name="O" value="O" class="choice">
 	</form>
@@ -32,210 +33,156 @@ if(isset($_POST['reset'])){
 	session_destroy();
 	header('Location:index.php');
 }
+if(isset($_POST['medium'])){
+	$_SESSION['level']=2;
+}
 
 
 if(isset($_POST['X'])){			// initialise the game____
-	$_SESSION['player']='X';
+	$_SESSION['player']=1;
+	$_SESSION['player2']=2;
+	$_SESSION['humansign']='X';
+	$_SESSION['aisign']='O';
 	$_SESSION['turn']=0;
 	$_SESSION['start']= true;
-	$_SESSION['startstate']= [ 0,0,0,
-							   0,0,0,
-							   0,0,0  ]; //startstate_____________
+	$_SESSION['state']= [ array(0,0,0),
+						array(0,0,0),
+						array(0,0,0)  ]; //startstate_________
+	$_SESSION['level']=1;
+	echo '	<form method="post">
+			<h3>difficulty level</h3>
+			<input type="submit" name="easy" value="easy" class="diff">
+			<input type="submit" name="medium" value="medium" class="diff">
+			</form>
+			<span><br></span>';
+
 } elseif(isset($_POST['O'])){
-	$_SESSION['player']='O';
+	$_SESSION['player']=2;
+	$_SESSION['player2']=1;
+	$_SESSION['humansign']='O';
+	$_SESSION['aisign']='X';
 	$_SESSION['turn']=0;
 	$_SESSION['start']= true;
-	$_SESSION['startstate']= [ 0,0,0,
-							   0,0,0,
-							   0,0,0  ]; //startstate_____________
-} 
+	$_SESSION['state']= [ array(0,0,0),
+						array(0,0,0),
+						array(0,0,0)  ]; //startstate_____________
+	$_SESSION['level']=1;
+	echo '	<form method="post">
+			<h3>difficulty level</h3>
+			<input type="submit" name="easy" value="easy" class="diff">
+			<input type="submit" name="medium" value="medium" class="diff">
+			</form>
+			<span><br></span>';
+} else {
+	$_SESSION['turn']=0;
+}
 
+// table ________________________________________________________________
 
-//block played cells_________________________
-
-
-if(isset($_SESSION['moves1']) and isset($_SESSION['moves2'])){
-	foreach($_SESSION['moves1'] as $k =>$v){
-		echo '<style> .cells'.$v.'{pointer-events: none; } </style>'; // block the cell after player 1 moves
-	}
-	foreach($_SESSION['moves2'] as $k =>$v){
-		echo '<style> .cells'.$v.'{pointer-events: none; } </style>'; // block the cell after player 2 moves
+if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
+	echo '<style>.choice{pointer-events: none;} </style>';
+	echo '<table>';
+	for($i=0;$i<3;$i++){
+		echo '<tr>';
+		for($j=0;$j<3;$j++){		
+			echo '<td>';
+			if($_SESSION['state'][$i][$j]===0){
+				$cell=$i.','.$j;
+				echo '<form method="post" ><input type="submit" name="'.$cell.'" value="" class="cells">';
+				if(isset($_POST[$cell])){
+					$_SESSION['state'][$i][$j]=$_SESSION['player'];	//add a mark to the cell
+					$_SESSION['turn']++;
+					//header('Location:index.php'); //________________________ header
+				}
+			echo '</form></td>';
+			} elseif($_SESSION['state'][$i][$j]!==0){
+				if($_SESSION['state'][$i][$j]===$_SESSION['player']){
+					echo '<form method="post"><input type="submit" name="'.$_SESSION['state'][$i][$j].'" value="'.$_SESSION['humansign'].'" class="cells'.$i.'_'.$j.'"  ><style>.cells'.$i.'_'.$j.'{ pointer-events: none; }</style></form></td>';
+				}
+				if($_SESSION['state'][$i][$j]===$_SESSION['player2']){
+					echo '<form method="post"><input type="submit" name="'.$_SESSION['state'][$i][$j].'" value="'.$_SESSION['aisign'].'" class="cells'.$i.'_'.$j.'"  ><style>.cells'.$i.'_'.$j.'{ pointer-events: none; }</style></form></td>';
+				}
+			} else {
+				echo '<form method="post"><input type="submit" name="'.$_SESSION['state'][$i][$j].'" value="" class="cells"></form></td>';
+			}
+		}
+		echo '</tr>';
 	}
 }
 
-//table___________________________________________________
 
-echo '<form method="post">';
-if(isset($_SESSION['start']) and !isset($_SESSION['end']) and $_SESSION['turn']<10){ 
-	foreach($_SESSION['startstate'] as $pos =>$val){
-		if($val===0){
-			$val=' ';
-		}
-		if($pos==2||$pos==5){
-			echo '<input type="submit" name="'.$pos.'" value="'.$val.'" class="cells'.$pos.'">';	//__ pos here 4 layout
-			echo '<br>';  // assign to inputs a position num and as value the sign of the player
-		} else {
-			echo '<input type="submit" name="'.$pos.'" value="'.$val.'" class="cells'.$pos.'">';	//__ 
-		}							   //idem..______
-		if(isset($_POST[$pos])){
-			$newstartstate=array($pos=>$_SESSION['player']);
-			$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); //state for next move
-			$_SESSION['moves1'][]=$pos;							// store player 1 game and pos
-			$_SESSION['player1state']=$_SESSION['startstate'];	// idem but on the game table
-			$_SESSION['turn']++;				//	add 1 to turn
-			//header('Location:index.php'); 
-			
-		}
-	}
-	echo '</form>';
-} elseif(!isset($_SESSION['end'])) {
-	echo '<h3> choose a sign to start the game </h3>';
-}
-
-// TURN counting and END print__________________________________________________________
-
-
-if(isset($_SESSION['turn']) and $_SESSION['turn']> 9 and !isset($_SESSION['end'])){
+if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
 	session_destroy();
 	header('Location:index.php');
-} elseif( isset($_SESSION['end']) ){
-	if($_SESSION['end']=='win1'){
-		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160X </h1>&#160WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
-	} elseif ( $_SESSION['end']=='win2' ){
-		echo '</form><div class="wrapit"><big><strong><h3>player</h3><h1>&#160O </h1>&#160WINS!</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
-	} elseif ( $_SESSION['end']=='draw' ){
-		echo '</form><div class="wrapit"><big><strong>! DRAW !</strong></big></div><style> input[class^="cells"]{pointer-events: none; } .choice{pointer-events: none;} </style>';
-	}
-
 }
 
-//__SIGNAL moves________________________________________
+//_______IA_____________//
 
-if(isset($_SESSION['turn']) and !isset($_SESSION['end'])){ 
-	echo 'turn n '.$_SESSION['turn'];
-	if($_SESSION['turn'] === 0 || $_SESSION['turn']%2 === 0 ){
-		if($_SESSION['player'] === 'X'){
-		echo '<span class="player1c">X <small>make your move!</small></span> ';			
-		} 
-		elseif($_SESSION['player'] === 'O'){
-		echo '<span class="player1c">X <small>make your move!</small></span> ';			
-		}
-	} elseif ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0 ){
-		if($_SESSION['player'] === 'X'){
-		echo '<span class="player1c">X <small>make your move!</small></span> ';			
-		} 
-		elseif($_SESSION['player'] === 'O'){
-		echo '<span class="player1c">X <small>make your move!</small></span> ';			
-		}
-	} if ($_SESSION['turn'] > 0){
-		echo '<style> .choice{pointer-events: none;} </style>';			// block pointer on sign choice
+if(isset($_SESSION['level']) and $_SESSION['level']==2){
+	echo 'minimax';
+	include 'minimax2.php';	
+} else { 
+	if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
+		$board=$_SESSION['state'];
+		$sign=$_SESSION['player2'];
+		include 'ai2.php';
+		$_SESSION['state']=random($board,$sign);
 	}
 }
 
-// basic random ia for testing _______________________________________________
 
-if(isset($_SESSION['player']) and isset($_SESSION['moves1'])){
-	$board=$_SESSION['moves1'];			// value of the move for the ai
-	$sign=$_SESSION['player'];			// sign of the player for the ai
-}
-
-
-//include 'ai.php';			// INCLUDE AI RANDOM________________________________________________________________############
-
-include 'ai_minimax.php';			// INCLUDE AI MINIMAX_______________________________________________________############
-
-// START the ai and pass to next turn____________________
-
-if(isset($_SESSION['turn']) and ($_SESSION['turn']=== 1 || $_SESSION['turn']%2 !== 0) ){	//when to play
-	$newstartstate=ia($board,$sign);														// START THE AI__________*****
-	$_SESSION['startstate']=array_replace($_SESSION['startstate'],$newstartstate); 			//state for next move
-	$_SESSION['player2state']= $_SESSION['startstate'];
-	//header('Location:index.php');
-}
-
-// GET the state of the board for each player separate______________________________
-
-if(isset($_SESSION['player2state']) and isset($_SESSION['player1state'])){
-	for($m=1;$m<=isset($_SESSION['player2state'][$m]);$m++){
-		if($_SESSION['player2state'][$m] == 'X'){
-			$_SESSION['player2state'][$m] = 0;
+function win($state){
+	for($i=0;$i<3;$i++){	
+			if  ($state[$i][0]===1 and $state[$i][1]===1 and $state[$i][2]===1){	return 1; // horizontals
+		} elseif($state[$i][0]===2 and $state[$i][1]===2 and $state[$i][2]===2){	return 2; // horizontals
+		} elseif($state[0][$i]===1 and $state[1][$i]===1 and $state[2][$i]===1){	return 1; // verticals
+		} elseif($state[0][$i]===2 and $state[1][$i]===2 and $state[2][$i]===2){	return 2; // verticals
+		} elseif($state[0][0]===1 and $state[1][1]===1 and $state[2][2]===1){ 	return 1; // diag
+		} elseif($state[0][0]===2 and $state[1][1]===2 and $state[2][2]===2){ 	return 2; // diag
+		} elseif($state[2][0]===1 and $state[1][1]===1 and $state[0][2]===1){	return 1; // diag2
+		} elseif($state[2][0]===2 and $state[1][1]===2 and $state[0][2]===2){	return 2; // diag2
 		}
-		foreach($_SESSION['player2state'] as $k => $v){
-			if($v == 'X'){
-				$v = array($k => 0);
-				$_SESSION['player2state'] =array_replace($_SESSION['player2state'],$v);	//state of the board ONLY 4 P 2 !!
+	}
+	$checkdraw=0;
+	for($i=0;$i<3;$i++){
+		for($j=0;$j<3;$j++){
+			if($state[$i][$j]!==0){	// count free cells, the match it's not finished
+				$checkdraw++;
 			}
 		}
 	}
-	for($n=1;$n<=isset($_SESSION['player1state'][$n]);$n++){
-		if($_SESSION['player1state'][$n] == 'O'){
-			$_SESSION['player1state'][$n] = 0;
-		}
-		foreach($_SESSION['player1state'] as $k => $v){
-			if($v == 'O'){
-				$v = array($k => 0);
-				$_SESSION['player1state'] =array_replace($_SESSION['player1state'],$v);	//state of the board ONLY 4 P 2 !!
-			}
-		}
-	} 
-}
-	
-// WINNING and ENDS conds_______________________
-
-if(isset($_SESSION['player1state']) and isset($_SESSION['player2state'])){
-	$win_a=[0,0,0,0,0,0,0,0,0];	
-	$win_b=$win_a;
-	$checkx=$_SESSION['player1state'];
-	$win_a=array_replace($win_a,$checkx);
-	if( ($win_a[0] === 'X' and $win_a[1] === 'X' and $win_a[2] === 'X' or 	//___HORIZONTALS___
-			$win_a[3] === 'X' and $win_a[4] === 'X' and $win_a[5] === 'X' or
-			$win_a[6] === 'X' and $win_a[7] === 'X' and $win_a[8] === 'X' or
-			$win_a[0] === 'X' and $win_a[3] === 'X' and $win_a[6] === 'X' or	//___VERTICALS_____
-			$win_a[1] === 'X' and $win_a[4] === 'X' and $win_a[7] === 'X' or
-			$win_a[2] === 'X' and $win_a[5] === 'X' and $win_a[8] === 'X' or
-			$win_a[0] === 'X' and $win_a[4] === 'X' and $win_a[8] === 'X' or	//___DIAGONALS_____
-			$win_a[2] === 'X' and $win_a[4] === 'X' and $win_a[6] === 'X' or $_SESSION['player'] === ('X' or 'O'))
-			and !isset($_SESSION['end'])	){
-			$_SESSION['end'] = 'win1';
-	} 
-	$checkx2=$_SESSION['player2state'];
-	$win_b=array_replace($win_b,$checkx2);
-	if (	($win_b[0] === 'O' and $win_b[1] === 'O' and $win_b[2] === 'O' or 	//___HORIZONTALS___
-				$win_b[3] === 'O' and $win_b[4] === 'O' and $win_b[5] === 'O' or
-				$win_b[6] === 'O' and $win_b[7] === 'O' and $win_b[8] === 'O' or
-				$win_b[0] === 'O' and $win_b[3] === 'O' and $win_b[6] === 'O' or	//___VERTICALS_____
-				$win_b[1] === 'O' and $win_b[4] === 'O' and $win_b[7] === 'O' or
-				$win_b[2] === 'O' and $win_b[5] === 'O' and $win_b[8] === 'O' or
-				$win_b[0] === 'O' and $win_b[4] === 'O' and $win_b[8] === 'O' or	//___DIAGONALS_____
-				$win_b[2] === 'O' and $win_b[4] === 'O' and $win_b[6] === 'O' or $_SESSION['player'] === ('X' or 'O'))
-			and !isset($_SESSION['end'])	 ){
-			$_SESSION['end'] = 'win2';
+	if($checkdraw<=9 ){	// if the match is not finish and we don't have winner return 'play'(0)
+		return 0;
 	}
-	if ( isset($_SESSION['turn']) and $_SESSION['turn'] == 10 and !isset($_SESSION['end'])) {	// compare  to check if DRAW
-			$_SESSION['end']='draw';
+	if($checkdraw=9 ){	// if the match is finish and we don't have winner return 'tie'(3)
+		return 3;
 	}
 }
 
+
+if(isset($_SESSION['state'])){
+	$win=win($_SESSION['state']);
+	if($win === 1){
+		echo '<h1> player 1 wins</h1>';
+		$_SESSION['end']=true;
+	} elseif ($win=== 2){
+		echo '<h1> player 2 wins</h1>';
+		$_SESSION['end']=true;
+	} elseif ($win===3 and !isset($_SESSION['end'])){
+		echo '<h1> TIE ! </h1>';
+		$_SESSION['end']=true;
+	}
+}
+
+if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
+	session_destroy();
+	header('Location:index.php');
+}
 
 
 ?>
 </main>
 	<footer>
-<?php
-
-if(isset($_SESSION['player']) and $_SESSION['player'] === 'X'){
-	echo '<span class="player1c">player 1 <small>sign:</small> <big> X </big></span>';	
-	echo '<span class="player2c">player 2 <small>sign:</small> <big> O </big></span>'; 
-} elseif (isset($_SESSION['player']) and $_SESSION['player'] === 'O'){
-	echo '<span class="player2c">player 1 <small>sign:</small> <big> O </big></span>';	
-	echo '<span class="player1c">player 2 <small>sign:</small> <big> X </big></span>'; 
-}
-
-
-?>
-			<br><br><br><br><br><br><br><br><br>
-			<p>giditree<p> 
-			<a href="https://github.com/Giacomo-DeGrandi">mon github</a> 
 	</footer>
 </body>
 </html>

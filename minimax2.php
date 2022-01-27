@@ -4,7 +4,6 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 	$board=$_SESSION['state'];
 	$state=$board;
 	$sign=$_SESSION['player2'];
-	$human=$_SESSION['player'];
 
 	//____IA______//
 	function ia($state,$sign){	 
@@ -12,16 +11,26 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 		//_____MOVE______//
 		function move($state,$sign){
 			//echo 'move!';
+			
+			for($i=0;$i<3;$i++){
+					for($j=0;$j<3;$j++){	//	check each cell
+						if($state[1][1]===0 and $state[1][1]!==$_SESSION['player']){
+							$state[1][1]=2;
+							return $state;
+						}
+					}
+			}
 
 			$bestmove=-1000;
 			$scorestate=[];
+			$depth=0;
 				for($i=0;$i<3;$i++){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[$i][$j]===0){	// if free
 							$state[$i][$j]=$sign;  // add a test mark
 							//var_dump($sign);
-							$score=minimax($state,$depth=0,false);	// get score for the cell;
-							//var_dump($score);
+							$score=minimax($state,false,$depth);	// get score for the cell;
+							var_dump($score);
 							$scorestate[]=$state;
 							if($score>$bestmove){
 								$bestmove=$score;
@@ -33,7 +42,8 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 				}
 				return $newstate;
 		}	//move
-		$move=move($state,$sign,$moves);
+		$move=move($state,$sign);
+		var_dump($move);
 		return $move;
 	}	//ia
 
@@ -54,51 +64,66 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 	$moves=$p1+$p2;
 	if($p2<$p1 and ($p1+$p2<=9)){
 		//__call ia______//
-		$_SESSION['state']=ia($board,$sign,$depth);
+		$_SESSION['state']=ia($board,$_SESSION['player2']);
 		$_SESSION['turn']++;	
 	}
 }
 
-function minimax($state,$depth,$max){
-	$score=winner($state,$depth);
+function minimax($state,$max,$depth){
+	$score=winner($state);
+	//var_dump($score);
 	if ($score!==1){
 		return $score;
 	}
 		if($max){	// maxi 2
 			//echo 'max';
-			$bestmove=-1000;
+			$maxi=-1000;
 				for($i=0;$i<3;$i++){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[$i][$j]===0){	// if free
-							$state[$i][$j]=2;  
-							$bestmove=max($bestmove,minimax($state,$depth++,!$max));	
+							$state[$i][$j]=$_SESSION['player2'];
+							//var_dump($depth);
+							$maxi=max($maxi,minimax($state,$depth++,!$max));	
 							$state[$i][$j]=0;
 						}
 					}	
 				}
-			return $bestmove -$depth;
+			return $maxi-$depth;
 		} else {	// mini 1
 			//echo 'min';
-			$bestmove=1000;
+			$mini=1000;
 				for($i=0;$i<3;$i++){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[$i][$j]===0){	// if free
-							$state[$i][$j]=1;
-							$bestmove=min($bestmove,minimax($state,$depth++,!$max));
+							$state[$i][$j]=$_SESSION['player'];
+							$mini=min($mini,minimax($state,$depth++,!$max));
 							$state[$i][$j]=0;
 						}
 					}	
 				} 
-			return $bestmove +$depth;
+			return $mini+$depth;
 		}
 }
 
 
-//_____series  count series of 2 pawns giving values to the empty
-function winner($state,$depth){
+//_____winner
+function winner($state){
 
-	if ($depth===9){	// if the match is finish and we don't have winner return 'tie'(3)
-		return 0; 
+	$p1=0;
+	$p2=0;
+	for($i=0;$i<3;$i++){
+		for($j=0;$j<3;$j++){
+			if($state[$i][$j]==1){
+				$p1++;
+			}
+			if($state[$i][$j]==2){
+				$p2++;
+			}
+		}
+	}
+	$moves=$p1+$p2;
+	if($moves===9){
+		return 0;
 	}
 	if($state[0][0] !== 0){
 		if( $state[0][0]===$state[0][1] and 
