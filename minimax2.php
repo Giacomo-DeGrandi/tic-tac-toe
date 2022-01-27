@@ -60,27 +60,24 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 }
 
 function minimax($state,$depth,$max){
-	//var_dump($state);
 	$score=winner($state,$depth);
 	if ($score!==1){
-		//var_dump($score);
 		return $score;
 	}
-		if($max){	// maxi 1
+		if($max){	// maxi 2
 			//echo 'max';
 			$bestmove=-1000;
 				for($i=0;$i<3;$i++){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[$i][$j]===0){	// if free
 							$state[$i][$j]=2;  
-							//var_dump($state);
 							$bestmove=max($bestmove,minimax($state,$depth++,!$max));	
 							$state[$i][$j]=0;
 						}
 					}	
 				}
 			return $bestmove -$depth;
-		} else {	// mini 2
+		} else {	// mini 1
 			//echo 'min';
 			$bestmove=1000;
 				for($i=0;$i<3;$i++){
