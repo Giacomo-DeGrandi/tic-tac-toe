@@ -18,7 +18,7 @@ session_start();
 		<br>
 		<h5>you're now on page <big>DEV</big></h5>
 	</header>
-<main>
+<main>	
 	<form method="post">
 		<input type="submit" name="reset" value="reset" id="reset">
 	</form>
@@ -33,6 +33,9 @@ if(isset($_POST['reset'])){
 	session_destroy();
 	header('Location:dev.php');
 }
+if(isset($_POST['medium'])){
+	$_SESSION['level']=2;
+}
 
 
 if(isset($_POST['X'])){			// initialise the game____
@@ -45,6 +48,13 @@ if(isset($_POST['X'])){			// initialise the game____
 	$_SESSION['state']= [ array(0,0,0),
 						array(0,0,0),
 						array(0,0,0)  ]; //startstate_________
+	$_SESSION['level']=1;
+	echo '	<form method="post">
+			<h3>difficulty level</h3>
+			<input type="submit" name="easy" value="easy" class="diff">
+			<input type="submit" name="medium" value="medium" class="diff">
+			</form>
+			<span><br></span>';
 
 } elseif(isset($_POST['O'])){
 	$_SESSION['player']=2;
@@ -56,6 +66,13 @@ if(isset($_POST['X'])){			// initialise the game____
 	$_SESSION['state']= [ array(0,0,0),
 						array(0,0,0),
 						array(0,0,0)  ]; //startstate_____________
+	$_SESSION['level']=1;
+	echo '	<form method="post">
+			<h3>difficulty level</h3>
+			<input type="submit" name="easy" value="easy" class="diff">
+			<input type="submit" name="medium" value="medium" class="diff">
+			</form>
+			<span><br></span>';
 } else {
 	$_SESSION['turn']=0;
 }
@@ -93,16 +110,26 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 	}
 }
 
-if(isset($_SESSION['turn'])){
-	echo $_SESSION['turn'];
-}
 
 if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
 	session_destroy();
 	header('Location:dev.php');
 }
 
-include 'minimax2.php';
+//_______IA_____________//
+
+if(isset($_SESSION['level']) and $_SESSION['level']==2){
+	echo 'minimax';
+	include 'minimax2.php';	
+} else { 
+	if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
+		$board=$_SESSION['state'];
+		$sign=$_SESSION['player2'];
+		include 'ai2.php';
+		$_SESSION['state']=random($board,$sign);
+	}
+}
+
 
 function win($state){
 	for($i=0;$i<3;$i++){	
@@ -116,18 +143,18 @@ function win($state){
 		} elseif($state[2][0]===2 and $state[1][1]===2 and $state[0][2]===2){	return 2; // diag2
 		}
 	}
-	$checkdraw=-9;
+	$checkdraw=0;
 	for($i=0;$i<3;$i++){
 		for($j=0;$j<3;$j++){
-			if($state[$i][$j]===0){	// count free cells, the match it's not finished
+			if($state[$i][$j]!==0){	// count free cells, the match it's not finished
 				$checkdraw++;
 			}
 		}
 	}
-	if($checkdraw<0 ){	// if the match is not finish and we don't have winner return 'play'(0)
+	if($checkdraw<=9 ){	// if the match is not finish and we don't have winner return 'play'(0)
 		return 0;
 	}
-	if($checkdraw>=0 ){	// if the match is finish and we don't have winner return 'tie'(3)
+	if($checkdraw=9 ){	// if the match is finish and we don't have winner return 'tie'(3)
 		return 3;
 	}
 }
@@ -137,15 +164,14 @@ if(isset($_SESSION['state'])){
 	$win=win($_SESSION['state']);
 	if($win === 1){
 		echo '<h1> player 1 wins</h1>';
+		$_SESSION['end']=true;
 	} elseif ($win=== 2){
 		echo '<h1> player 2 wins</h1>';
-	} elseif ($win=== 3){
+		$_SESSION['end']=true;
+	} elseif ($win===3 and !isset($_SESSION['end'])){
 		echo '<h1> TIE ! </h1>';
+		$_SESSION['end']=true;
 	}
-}
-
-if(isset($_SESSION['turn'])){
-	echo 'turn n'.$_SESSION['turn'];
 }
 
 if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){

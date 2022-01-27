@@ -75,6 +75,27 @@
 	.choice[name*='O']:hover {
 		background-color: var(--player2D);
 	}
+	.diff{
+		background-color: var(--purpleD);
+		border: none;
+		box-shadow: var(--genshad);	
+		font-size: 1em;
+		text-align: center;	
+		color: white;
+		border-radius: 50px;
+	}
+	.diff:hover{
+		background-color: var(--purple);
+		border: none;
+		box-shadow: var(--genshad);	
+		font-size: 1em;
+		text-align: center;	
+		color: white;
+		border-radius: 50px;
+	}
+	h3 {
+		font-size: 1em;
+	}
 
 	input[class^="cells"] {
 		width: 80px;
