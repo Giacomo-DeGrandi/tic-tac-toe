@@ -12,6 +12,8 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 		function move($state,$sign){
 			//echo 'move!';
 			
+			
+			//play the center if free... here's the cheat
 			for($i=0;$i<3;$i++){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[1][1]===0 and $state[1][1]!==$_SESSION['player']){
@@ -23,14 +25,13 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 
 			$bestmove=-1000;
 			$scorestate=[];
-			$depth=0;
 				for($i=0;$i<3;$i++){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[$i][$j]===0){	// if free
 							$state[$i][$j]=$sign;  // add a test mark
 							//var_dump($sign);
-							$score=minimax($state,false,$depth);	// get score for the cell;
-							var_dump($score);
+							$score=minimax($state,false,$depth=true);	// get score for the cell;
+							//var_dump($score);
 							$scorestate[]=$state;
 							if($score>$bestmove){
 								$bestmove=$score;
@@ -43,7 +44,7 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 				return $newstate;
 		}	//move
 		$move=move($state,$sign);
-		var_dump($move);
+		//var_dump($move);
 		return $move;
 	}	//ia
 
@@ -88,7 +89,7 @@ function minimax($state,$max,$depth){
 						}
 					}	
 				}
-			return $maxi-$depth;
+			return $maxi;
 		} else {	// mini 1
 			//echo 'min';
 			$mini=1000;
@@ -101,7 +102,7 @@ function minimax($state,$max,$depth){
 						}
 					}	
 				} 
-			return $mini+$depth;
+			return $mini;
 		}
 }
 

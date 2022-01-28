@@ -92,7 +92,7 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 				if(isset($_POST[$cell])){
 					$_SESSION['state'][$i][$j]=$_SESSION['player'];	//add a mark to the cell
 					$_SESSION['turn']++;
-					//header('Location:index.php'); //________________________ header
+					header('Location:index.php'); //________________________ header
 				}
 			echo '</form></td>';
 			} elseif($_SESSION['state'][$i][$j]!==0){
@@ -119,7 +119,7 @@ if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
 //_______IA_____________//
 
 if(isset($_SESSION['level']) and $_SESSION['level']==2){
-	echo 'minimax';
+	echo 'fake minimax';
 	include 'minimax2.php';	
 } else { 
 	if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
