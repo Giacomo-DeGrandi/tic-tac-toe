@@ -123,10 +123,11 @@ if(isset($_SESSION['level']) and $_SESSION['level']==2){
 	include 'minimax2.php';	
 } else { 
 	if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
+		/*
 		$board=$_SESSION['state'];
 		$sign=$_SESSION['player2'];
 		include 'ai2.php';
-		$_SESSION['state']=random($board,$sign);
+		$_SESSION['state']=random($board,$sign);*/
 	}
 }
 
