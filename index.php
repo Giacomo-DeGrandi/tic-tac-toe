@@ -14,9 +14,8 @@ session_start();
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <body>
 	<header>
-		<a href="index.php">index</a>
 		<br>
-		<h5>you're now on page <big>DEV</big></h5>
+		<h5><big>TIC TAC TOE</big></h5>
 	</header>
 <main>	
 	<form method="post">
@@ -36,6 +35,9 @@ if(isset($_POST['reset'])){
 if(isset($_POST['medium'])){
 	$_SESSION['level']=2;
 }
+if(isset($_POST['hard'])){
+	$_SESSION['level']=3;
+}
 
 
 if(isset($_POST['X'])){			// initialise the game____
@@ -53,6 +55,7 @@ if(isset($_POST['X'])){			// initialise the game____
 			<h3>difficulty level</h3>
 			<input type="submit" name="easy" value="easy" class="diff">
 			<input type="submit" name="medium" value="medium" class="diff">
+			<input type="submit" name="hard" value="hard" class="diff">
 			</form>
 			<span><br></span>';
 
@@ -71,15 +74,18 @@ if(isset($_POST['X'])){			// initialise the game____
 			<h3>difficulty level</h3>
 			<input type="submit" name="easy" value="easy" class="diff">
 			<input type="submit" name="medium" value="medium" class="diff">
+			<input type="submit" name="hard" value="hard" class="diff">
 			</form>
 			<span><br></span>';
-} else {
+} 
+
+if(!isset($_SESSION['turn'])){
 	$_SESSION['turn']=0;
 }
 
 // table ________________________________________________________________
 
-if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
+if(isset($_SESSION['start'])){
 	echo '<style>.choice{pointer-events: none;} </style>';
 	echo '<table>';
 	for($i=0;$i<3;$i++){
@@ -111,23 +117,27 @@ if(isset($_SESSION['start']) and !isset($_SESSION['end'])){
 }
 
 
-if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
-	session_destroy();
-	header('Location:index.php');
-}
-
 //_______IA_____________//
 
-if(isset($_SESSION['level']) and $_SESSION['level']==2){
-	echo 'fake minimax';
-	include 'minimax2.php';	
+if((isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0 and isset($_SESSION['level']) and $_SESSION['level']===2)  ){
+	echo 'medium level';
+	$board=$_SESSION['state'];
+	$sign=$_SESSION['player2'];
+	include 'ai_2.php';	
+	$_SESSION['state']=iaMedium($board,$sign);
+
+} elseif(isset($_SESSION['level']) and $_SESSION['level']===3 ){
+	echo 'hard level';
+	include 'fake_minimax.php';	
+
 } else { 
-	if (isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0){
-		/*
+	if ((isset($_SESSION['turn']) and isset($_SESSION['state'])  and $_SESSION['turn'] === 1 or $_SESSION['turn']%2 !== 0) 
+		){
+		echo 'easy level';
 		$board=$_SESSION['state'];
 		$sign=$_SESSION['player2'];
-		include 'ai2.php';
-		$_SESSION['state']=random($board,$sign);*/
+		include 'ai.php';
+		$_SESSION['state']=ia($board,$sign);
 	}
 }
 
@@ -152,10 +162,9 @@ function win($state){
 			}
 		}
 	}
-	if($checkdraw<=9 ){	// if the match is not finish and we don't have winner return 'play'(0)
+	if($checkdraw<9 ){	// if the match is not finish and we don't have winner return 'play'(0)
 		return 0;
-	}
-	if($checkdraw=9 ){	// if the match is finish and we don't have winner return 'tie'(3)
+	} elseif ($checkdraw===9 ){	// if the match is finish and we don't have winner return 'tie'(3)
 		return 3;
 	}
 }
@@ -163,22 +172,22 @@ function win($state){
 
 if(isset($_SESSION['state'])){
 	$win=win($_SESSION['state']);
-	if($win === 1){
+	if($win === 1 ){
 		echo '<h1> player 1 wins</h1>';
+		echo '<style>.choice{pointer-events: none;}.cells{pointer-events: none;} </style>';
 		$_SESSION['end']=true;
-	} elseif ($win=== 2){
+	} elseif ($win=== 2 ){
 		echo '<h1> player 2 wins</h1>';
+		echo '<style>.choice{pointer-events: none;}.cells{pointer-events: none;} </style>';
 		$_SESSION['end']=true;
-	} elseif ($win===3 and !isset($_SESSION['end'])){
+	} elseif ($win === 3 and !isset($_SESSION['end'])){
 		echo '<h1> TIE ! </h1>';
+		echo '<style>.choice{pointer-events: none;}.cells{pointer-events: none;} </style>';
 		$_SESSION['end']=true;
 	}
 }
 
-if(isset($_SESSION['turn']) and $_SESSION['turn']=== 9){
-	session_destroy();
-	header('Location:index.php');
-}
+
 
 
 ?>

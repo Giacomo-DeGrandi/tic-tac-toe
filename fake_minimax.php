@@ -17,7 +17,7 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 			for($i=0;$i<3;$i++){
 					for($j=0;$j<3;$j++){	//	check each cell
 						if($state[1][1]===0 and $state[1][1]!==$_SESSION['player']){
-							$state[1][1]=2;
+							$state[1][1]=$_SESSION['player2'];
 							return $state;
 						}
 					}
@@ -41,7 +41,9 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 						}
 					}
 				}
-				return $newstate;
+				if(isset($newstate)){
+					return $newstate;
+				}
 		}	//move
 		$move=move($state,$sign);
 		//var_dump($move);
@@ -54,10 +56,10 @@ if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
 	$p2=0;
 	for($i=0;$i<3;$i++){
 		for($j=0;$j<3;$j++){
-			if($state[$i][$j]==1){
+			if($state[$i][$j]==$_SESSION['player']){
 				$p1++;
 			}
-			if($state[$i][$j]==2){
+			if($state[$i][$j]==$_SESSION['player2']){
 				$p2++;
 			}
 		}
@@ -114,10 +116,10 @@ function winner($state){
 	$p2=0;
 	for($i=0;$i<3;$i++){
 		for($j=0;$j<3;$j++){
-			if($state[$i][$j]==1){
+			if($state[$i][$j]==$_SESSION['player']){
 				$p1++;
 			}
-			if($state[$i][$j]==2){
+			if($state[$i][$j]==$_SESSION['player2']){
 				$p2++;
 			}
 		}
@@ -130,17 +132,17 @@ function winner($state){
 		if( $state[0][0]===$state[0][1] and 
 			$state[0][1]===$state[0][2]){		//h first row
 			$sign=$state[0][0];
-			if($sign===1){ return -10;} elseif($sign===2){ return 10;}
+			if($sign===$_SESSION['player']){ return -10;} elseif($sign===$_SESSION['player2']){ return 10;}
 		}
 		if( $state[0][0]===$state[1][0] and
 			$state[1][0]===$state[2][0]){		//v first col
 			$sign=$state[0][0];
-			if($sign===1){ return -10;} elseif($sign===2){ return 10;}
+			if($sign===$_SESSION['player']){ return -10;} elseif($sign===$_SESSION['player2']){ return 10;}
 		}
 		if( $state[0][0]===$state[1][1] and 
 			$state[1][1]===$state[2][2]){		//d first diag
 			$sign=$state[0][0];
-			if($sign===1){ return -10;} elseif($sign===2){ return 10;}
+			if($sign===$_SESSION['player']){ return -10;} elseif($sign===$_SESSION['player2']){ return 10;}
 		}
 
 	}
@@ -149,17 +151,17 @@ function winner($state){
 		if( $state[1][0]===$state[1][1] and 
 			$state[1][1]===$state[1][2]){		//h middle row
 			$sign=$state[1][1];
-			if($sign===1){ return -10;} elseif($sign===2){ return 10;}
+			if($sign===$_SESSION['player']){ return -10;} elseif($sign===$_SESSION['player2']){ return 10;}
 		}
 		if( $state[0][1]===$state[1][1] and
 			$state[1][1]===$state[2][1]){		//v middle col
 			$sign=$state[1][1];
-			if($sign===1){ return -10;} elseif($sign===2){ return 10;}
+			if($sign===$_SESSION['player']){ return -10;} elseif($sign===$_SESSION['player2']){ return 10;}
 		}
 		if( $state[0][2]===$state[1][1] and 
 			$state[1][1]===$state[2][0]){		//d second diag
 			$sign=$state[1][1];
-			if($sign===1){ return -10;} elseif($sign===2){ return 10;}
+			if($sign===$_SESSION['player']){ return -10;} elseif($sign===$_SESSION['player2']){ return 10;}
 		}
 
 	}
@@ -167,12 +169,12 @@ function winner($state){
 		if( $state[2][0]===$state[2][1] and 
 			$state[2][1]===$state[2][2]){		//h last row
 			$sign=$state[2][2];
-			if($sign===1){ return -10;} elseif($sign===2){ return 10;}
+			if($sign===$_SESSION['player']){ return -10;} elseif($sign===$_SESSION['player2']){ return 10;}
 		}
 		if( $state[0][2]===$state[1][2] and
 			$state[1][2]===$state[2][2]){		//h last row
 			$sign=$state[2][2];
-			if($sign===1){ return -10;} elseif($sign===2){ return 10;}
+			if($sign===$_SESSION['player']){ return -10;} elseif($sign===$_SESSION['player2']){ return 10;}
 		}		
 	}
 	return 1;

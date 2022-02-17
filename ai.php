@@ -1,6 +1,6 @@
 <?php
 
-function random($board, $sign){
+function ia($board, $sign){
 	for($i=0;$i<3;$i++){
 		for($j=0;$j<3;$j++){
 			if($_SESSION['state'][$i][$j]===0){
