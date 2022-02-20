@@ -1,9 +1,10 @@
 <?php
 
 if (isset($_SESSION['turn']) and isset($_SESSION['state'])){
-	$board=$_SESSION['state'];
-	$state=$board;
-	$sign=$_SESSION['player2'];
+
+	$board = $_SESSION['state'];
+	$state = $board;
+	$sign = $_SESSION['player2'];
 
 	//____IA______//
 	function ia($state,$sign){	 

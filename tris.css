@@ -19,21 +19,9 @@
 		color: white;
 	}
 
-	a {
-		text-decoration: none;
-		font-family: var(--genfont);
-		font-size: 1.5em;
-		color: white;
-	}
-	a:hover {
-		color: var(--pink);
-	}
-	h5 {
-		font-size: 1em;
-		font-family: var(--genfont);
-	}
-
-	main{
+	
+	main
+	{
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -42,16 +30,56 @@
 		background-color:  var(--bkgcolor);
 		color: white;
 	}
+	
 	footer {
 		text-align: center;
 		font-family: var(--genfont);
 		font-size: 1.5em;
 		color: white;
 	}
-	input {
+	
+	a {
+		text-decoration: none;
+		font-family: var(--genfont);
+		font-size: 1.5em;
+		color: white;
+	}
+
+	a:hover {
+		color: var(--pink);
+	}
+
+	h3 {
+		font-size: 1em;
+	}
+
+	h5 {
+		font-size: 1em;
+		font-family: var(--genfont);
+	}
+
+	input 
+	{
 		font-family: var(--genfont);
 		font-size: 2em;	
 	}
+
+	input[class^="cells"] 
+	{
+		width: 80px;
+		height: 80px;
+		background-color: white;
+		border: none;
+		box-shadow: var(--genshad);		
+		text-align: center;
+	}
+
+	input[class^="cells"]:hover 
+	{
+		background-color: var(--purple);
+		color: white;
+	}
+
 	.choice {
 		width: 70px;
 		height: 70px;
@@ -63,19 +91,29 @@
 		margin-top: 20px;
 		border-radius: 50px;
 	}
-	.choice[name*='X'] {
+
+	.choice[name*='X'] 
+	{
 		background-color: var(--player1);
 	}
-	.choice[name*='X']:hover {
+
+	.choice[name*='X']:hover 
+	{
 		background-color: var(--player1D);
 	}
-	.choice[name*='O'] {
+
+	.choice[name*='O'] 
+	{
 		background-color: var(--player2);
 	}
-	.choice[name*='O']:hover {
+
+	.choice[name*='O']:hover 
+	{
 		background-color: var(--player2D);
 	}
-	.diff{
+
+	.diff
+	{
 		background-color: var(--purpleD);
 		border: none;
 		box-shadow: var(--genshad);	
@@ -84,7 +122,9 @@
 		color: white;
 		border-radius: 50px;
 	}
-	.diff:hover{
+
+	.diff:hover
+	{
 		background-color: var(--purple);
 		border: none;
 		box-shadow: var(--genshad);	
@@ -93,22 +133,7 @@
 		color: white;
 		border-radius: 50px;
 	}
-	h3 {
-		font-size: 1em;
-	}
-
-	input[class^="cells"] {
-		width: 80px;
-		height: 80px;
-		background-color: white;
-		border: none;
-		box-shadow: var(--genshad);		
-		text-align: center;
-	}
-	input[class^="cells"]:hover {
-		background-color: var(--purple);
-		color: white;
-	}
+	
 	#reset {
 		padding: 15px;
 		border: none;
@@ -117,16 +142,23 @@
 		color: white;
 		border-radius: 40%;
 	}
-	#reset:hover {
+
+	#reset:hover 
+	{
 		background-color: var(--purpleD);
 	}
-	.player1c {
+
+	.player1c 
+	{
 		color: var(--player1);
 	}
-	.player2c {
+
+	.player2c 
+	{
 		color: var(--player2);
 	}
 
-	.wrapit {
+	.wrapit 
+	{
 		text-align: center;
 	}
